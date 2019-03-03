@@ -87,6 +87,7 @@ father_3_2 = list()  # father subsection (lvl 2)
 figures     = list()
 tables      = list()
 citations   = list()
+equations   = list()
 ############################################################
 
 # These lists are used when a reference file is used
@@ -217,6 +218,20 @@ if ref_file == "":
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
             pr.text = re.sub('\^', '', pr.text)
+        # equations
+        if '^eq'.lower() in pr.text.lower():
+            # Loop added to work with runs (strings with same style)
+            tmp = re.split('\^', pr.text)
+            for pt in tmp:
+                if 'eq{'.lower() in pt.lower():
+                    remove_str = pt
+                    tmp1 = re.split('{|}', pt)
+                    if v2:
+                        print(tmp1)
+                    equations.append(tmp1[1])
+            pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
+            pr.text = pattern.sub('', pr.text)
+            pr.text = re.sub('\^', '', pr.text)
         # tables
         if '^tbl'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
@@ -258,6 +273,8 @@ if ref_file == "":
         print(section_3)
         print('Figures')
         print(figures)
+        print('Equations')
+        print(equations)
         print('Tables')
         print(tables)
         print('Citations')
@@ -309,6 +326,14 @@ if ref_file == "":
                 if str(figures[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('fig' + str(figures[i])), re.IGNORECASE)
+                    txt = str(1 + i)
+                    inline[j].text = pattern.sub(txt, inline[j].text)
+
+            # equations
+            for i in range(len(equations)):
+                if str(equations[i]).lower() in inline[j].text.lower():
+                    #print(inline[j].text)
+                    pattern = re.compile(re.escape('fig' + str(equations[i])), re.IGNORECASE)
                     txt = str(1 + i)
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
@@ -411,6 +436,41 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(figures[i])), re.IGNORECASE)
+                        txt = str(1 + i)
+                        inline[j].text = pattern.sub(txt, inline[j].text)
+
+        for i in range(len(equations)):
+            if str("ref"+str(equations[i].lower())) in p.text.lower():
+                inline = p.runs
+                if v1:
+                    print("equations :")
+                    print(equations[i])
+
+                #print(p.text)
+                for j in range(len(inline)):
+                    #print(inline[j].text)
+                    if "ref" in inline[j].text.lower():
+                        tmp_txt=inline[j].text.lower()
+                        k=1
+                        flag=True
+                        while flag:
+                            #print(k)
+                            if str("ref" + str(equations[i].lower())) in tmp_txt:
+                                flag=False
+                            else:
+                                if ((k>max) or ((j+k)==(len(inline))-1) or ((j+k)>=(len(inline)))):
+                                    flag=False
+                                else:
+                                    tmp_txt=tmp_txt+inline[j+k].text.lower()
+                                    inline[j].text=inline[j].text+inline[j+k].text
+                                    inline[j+k].text = ""
+
+                                k=k+1
+                        if v2:
+                            print(tmp_txt)
+                            print(inline[j].text)
+
+                        pattern = re.compile(re.escape('ref' + str(equations])), re.IGNORECASE)
                         txt = str(1 + i)
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
