@@ -470,7 +470,7 @@ if ref_file == "":
                             print(tmp_txt)
                             print(inline[j].text)
 
-                        pattern = re.compile(re.escape('ref' + str(equations])), re.IGNORECASE)
+                        pattern = re.compile(re.escape('ref' + str(equations[i])), re.IGNORECASE)
                         txt = str(1 + i)
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
