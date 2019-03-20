@@ -37,8 +37,8 @@ import docx
 from docx import Document
 from docx.shared import Inches
 
-#@TODO:
-# Need to fix bug with spaces in the labels
+#@TODO: Need to fix bug with spaces in the labels.
+#@TODO: There is bug that removes footnotes. 
 
 
 parser = argparse.ArgumentParser(description='Word document parser. Generates citations and cross-references from latex like text in word document files.')
