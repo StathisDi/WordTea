@@ -63,6 +63,9 @@ args = parser.parse_args()
 #             Define a set of specific characters that are acceptable after a reference, for example accepted characters can be:
 #              <space> . , [ ] etc but not characters like _ or any letter.
 #TODO add functionality for reference from bibtex file
+#TODO change the sections to 2D lists
+#TODO sections counters should start with 1
+#TODO create function for search and writing
 
 
 ###########################################################
@@ -72,18 +75,22 @@ args = parser.parse_args()
 # These lists are used when no reference file is used
 
 section_0  = list()  # main sections
+section_0_index = list()
 
 section_1  = list()
+section_1_index = list()
 father_0   = list()  # father main section of the subsection
 
 section_2  = list()
 father_2_0 = list()  # father main section of the subsection
 father_2_1 = list()  # father subsection (lvl 1)
+section_2_index = list()
 
 section_3  = list()
 father_3_0 = list()  # father main section of the subsection
 father_3_1 = list()  # father subsection (lvl 1)
 father_3_2 = list()  # father subsection (lvl 2)
+section_3_index = list()
 
 figures     = list()
 tables      = list()
@@ -147,6 +154,9 @@ if ref_file == "":
     sec_0 = 0
     sec_1 = 0
     sec_2 = 0
+    prev_sec_0 = 0;
+    prev_sec_1 = 0;
+    prev_sec_2 = 0;
     for pr in document.paragraphs:
         # lvl 0 sections
         if '^sec1'.lower() in pr.text.lower():
@@ -157,6 +167,7 @@ if ref_file == "":
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
                     section_0.append(tmp1[1])
+                    section_0_index.append(sec_0)
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
             pr.text = re.sub('\^', '', pr.text)
@@ -164,12 +175,17 @@ if ref_file == "":
         # lvl 1 sections
         if '^sec2'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
+            if (prev_sec_0 != sec_0): #reset counters for sec2 and 3  when sec1 is changig
+                sec_1 = 0
+                sec_2 = 0
+                prev_sec_0 = sec_0
             tmp = re.split('\^', pr.text)
             for pt in tmp:
                 if 'sec2'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
                     section_1.append(tmp1[1])
+                    section_1_index.append(sec_1)
                     father_0.append(sec_0)
                     pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
@@ -177,6 +193,9 @@ if ref_file == "":
             sec_1 = sec_1 + 1
         # lvl 2 sections
         if '^sec3'.lower() in pr.text.lower():
+            if (prev_sec_1 != sec_1): #reset counters for sec3 when sec2 is changing
+                sec_2 = 0
+                prev_sec_1 = sec_1
             # Loop added to work with runs (strings with same style)
             tmp = re.split('\^', pr.text)
             for pt in tmp:
@@ -184,27 +203,13 @@ if ref_file == "":
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
                     section_2.append(tmp1[1])
+                    section_2_index.append(sec2)
                     father_2_0.append(sec_0)
                     father_2_1.append(sec_1)
                     pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
             pr.text = re.sub('\^', '', pr.text)
             sec_2 = sec_2 + 1
-        # lvl 3 sections
-        if '^sec4'.lower() in pr.text.lower():
-            # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
-            for pt in tmp:
-                if 'sec4'.lower() in pt.lower():
-                    remove_str = pt
-                    tmp1 = re.split('{|}', pt)
-                    section_1.append(tmp1[1])
-                    father_3_0.append(sec_0)
-                    father_3_1.append(sec_1)
-                    father_3_2.append(sec_2)
-            pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
-            pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
         # figures
         if '^fig'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
@@ -266,12 +271,18 @@ if ref_file == "":
     if v1:
         print('Sections lvl 1')
         print(section_0)
+        print('Subsection lvl 1 index')
+        print(section_0_index)
         print('Subsections lvl 2')
         print(section_1)
+        print('Subsection lvl 2 index')
+        print(section_1_index)
+        print('Father lvl 2')
+        print(father_0)
         print('Subsections lvl 3')
         print(section_2)
-        print('Subsections lvl 4')
-        print(section_3)
+        print('Subsection lvl 3 index')
+        print(section_2_index)
         print('Figures')
         print(figures)
         print('Equations')
@@ -296,14 +307,16 @@ if ref_file == "":
                 if str(section_0[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_0[i])), re.IGNORECASE)
-                    inline[j].text = pattern.sub(str(i + 1), inline[j].text)
+                    txt = str(1 + section_0_index[i])
+                    inline[j].text = pattern.sub(txt, inline[j].text)
 
             # sections lvl 1
             for i in range(len(section_1)):
                 if str(section_1[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_1[i])), re.IGNORECASE)
-                    txt = str(father_0[i]+1) + '.' + str(1 + i)
+                    txt = str(1 + section_1_index[i])
+                    txt = str(father_0[i]) + '.' + txt
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # sections lvl 2
@@ -311,15 +324,8 @@ if ref_file == "":
                 if str(section_2[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_2[i])), re.IGNORECASE)
-                    txt = str(father_2_0[i]+1) + '.' + str(father_2_1[i]+1) + '.' + str(1 + i)
-                    inline[j].text = pattern.sub(txt, inline[j].text)
-
-            # sections lvl 3
-            for i in range(len(section_3)):
-                if str(section_3[i]).lower() in inline[j].text.lower():
-                    #print(inline[j].text)
-                    pattern = re.compile(re.escape('ref' + str(section_3[i])), re.IGNORECASE)
-                    txt = str(father_3_0[i]+1) + '.' + str(father_3_1[i]+1) + '.' + str(father_3_2[i]+1) + '.' + str(1 + i)
+                    txt = str(1 + section_2_index[i])
+                    txt = str(father_2_0[i]) + '.' + str(father_2_1[i]) + '.' + txt
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # figures
@@ -543,7 +549,7 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_0[i])), re.IGNORECASE)
-                        txt = str(1 + i)
+                        txt = str(1 + section_0_index[i])
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
         # section lvl 1
@@ -579,7 +585,8 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_1[i])), re.IGNORECASE)
-                        txt = str(father_0[i]+1) + '.' + str(1 + i)
+                        txt = str(1 + section_1_index[i])
+                        txt = str(father_0[i]) + '.' + txt
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
         # section lvl 2
@@ -615,16 +622,9 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_2[i])), re.IGNORECASE)
-                        txt = str(father_2_0[i]+1) + '.' + str(father_2_1[i]+1) + '.' + str(1 + i)
+                        txt = str(1 + section_2_index[i])
+                        txt = str(father_2_0[i]) + '.' + str(father_2_1[i]) + '.' + txt
                         inline[j].text = pattern.sub(txt, inline[j].text)
-
-        # section lvl 3
-        for i in range(len(section_3)):
-            if str("ref" + str(section_3[i].lower())) in p.text.lower():
-                inline = p.runs
-                if v1:
-                    print("Section lvl 4 :")
-                    print(section_3[i])
 
                 # print(p.text)
                 for j in range(len(inline)):
