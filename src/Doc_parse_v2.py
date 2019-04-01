@@ -37,7 +37,6 @@ import docx
 from docx import Document
 from docx.shared import Inches
 
-#@TODO: Need to fix bug with spaces in the labels.
 #@TODO: There is bug that removes footnotes. 
 
 
@@ -46,9 +45,13 @@ parser.add_argument('inFile', help='Path to the input file.')
 parser.add_argument('pdfFile', help='Path to the output pdf file.')
 parser.add_argument('tmpFile', help='Path to the output temporary file.')
 parser.add_argument('-r', metavar='ref', help='Path to the reference file (if a reference file is to be used).')
-parser.add_argument('-i', metavar='iter', help='Max iterations used when searching to complete a cross-reference tag, default 4.', default=4)
+parser.add_argument('-i', metavar='iter', help='Max iterations used when searching to complete a cross-reference tag, default 5.', default=5)
 parser.add_argument('--silient', action='store_false', help='Disable Verbose level 1, basic status print for missed references and citations inside the document')
 parser.add_argument('--verbose', action='store_true', help='Enable Verbose level 2, extreme error print for script debug')
+parser.add_argument('-s1', metavar='s1_format', help='Format of the section 1 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
+parser.add_argument('-s2', metavar='s2_format', help='Format of the section 2 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
+parser.add_argument('-s3', metavar='s3_format', help='Format of the section 3 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
+parser.add_argument('-table', metavar='table_format', help='Format of the table reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
 
 args = parser.parse_args()
 
@@ -67,6 +70,42 @@ args = parser.parse_args()
 #TODO sections counters should start with 1
 #TODO create function for search and writing
 
+###########################################################
+# Functions ###############################################
+###########################################################
+
+# Function to convert integer to latin numera
+def int_to_roman(input):
+    if not isinstance(input, type(1)):
+        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+    if not 0 < input < 21:
+        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+    ints = ( 40, 10,  9,   5,  4,   1)
+    nums = ('XL','X','IX','V','IV','I')
+    result = []
+    for i in range(len(ints)):
+        count = int(input / ints[i])
+        result.append(nums[i] * count)
+        input -= ints[i] * count
+    return ''.join(result)
+
+# Function to convert integer to small letters
+def int_to_small(input):
+    if not isinstance(input, type(1)):
+        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+    if not 0 < input < 21:
+        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+    nums = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' , 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't')
+    return nums[input]
+
+# Function to convert integer to capital letters
+def int_to_cap(input):
+    if not isinstance(input, type(1)):
+        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+    if not 0 < input < 21:
+        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+    nums = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' , 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'E', 'S', 'T')
+    return nums[input]
 
 ###########################################################
 # Lists used for the different types of cross-references ##
@@ -124,7 +163,27 @@ tmp_file = os.path.abspath(args.tmpFile)
 v1 = args.silient
 v2 = args.verbose
 max = args.i
-
+s1_f = int(args.s1)
+s2_f = int(args.s2)
+s3_f = int(args.s3)
+tbl_f = int(args.table)
+# Error hnadling
+if not isinstance(s1_f, type(1)):
+        raise TypeError("-s1 expected integer, got %s" % type(input))
+if not isinstance(s2_f, type(1)):
+        raise TypeError("-s2 expected integer, got %s" % type(input))
+if not isinstance(s3_f, type(1)):
+        raise TypeError("-s3 expected integer, got %s" % type(input))
+if not isinstance(tbl_f, type(1)):
+        raise TypeError("-s3 expected integer, got %s" % type(input))
+if not 0 < s1_f < 5:
+        raise ValueError("-s1 argument must be between 1 and 4")
+if not 0 < s2_f < 5:
+        raise ValueError("-s2 Argument must be between 1 and 4")
+if not 0 < s3_f < 5:
+        raise ValueError("-s3 Argument must be between 1 and 4")
+if not 0 < tbl_f < 5:
+        raise ValueError("-s1 argument must be between 1 and 4")
 
 if v2:
     print(max)
@@ -154,23 +213,24 @@ if ref_file == "":
     sec_0 = 0
     sec_1 = 0
     sec_2 = 0
-    prev_sec_0 = 0;
-    prev_sec_1 = 0;
-    prev_sec_2 = 0;
+    prev_sec_0 = 0
+    prev_sec_1 = 0
+    prev_sec_2 = 0
     for pr in document.paragraphs:
         # lvl 0 sections
         if '^sec1'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'sec1'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     section_0.append(tmp1[1])
                     section_0_index.append(sec_0)
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
             sec_0 = sec_0 + 1
         # lvl 1 sections
         if '^sec2'.lower() in pr.text.lower():
@@ -179,17 +239,18 @@ if ref_file == "":
                 sec_1 = 0
                 sec_2 = 0
                 prev_sec_0 = sec_0
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'sec2'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     section_1.append(tmp1[1])
                     section_1_index.append(sec_1)
                     father_0.append(sec_0)
                     pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
             sec_1 = sec_1 + 1
         # lvl 2 sections
         if '^sec3'.lower() in pr.text.lower():
@@ -197,73 +258,78 @@ if ref_file == "":
                 sec_2 = 0
                 prev_sec_1 = sec_1
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'sec3'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     section_2.append(tmp1[1])
-                    section_2_index.append(sec2)
+                    section_2_index.append(sec_2)
                     father_2_0.append(sec_0)
                     father_2_1.append(sec_1)
                     pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
             sec_2 = sec_2 + 1
         # figures
         if '^fig'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'fig{'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     if v2:
                         print(tmp1)
                     figures.append(tmp1[1])
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
         # equations
         if '^eq'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'eq{'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     if v2:
                         print(tmp1)
                     equations.append(tmp1[1])
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
         # tables
         if '^tbl'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'tbl'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     tables.append(tmp1[1])
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
         # citations
         if '^cite'.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split('\^', pr.text)
+            tmp = re.split(r'\^', pr.text)
             for pt in tmp:
                 if 'cite{'.lower() in pt.lower():
                     remove_str = pt
                     tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
                     if v2:
                         print(tmp1)
                     citations.append(tmp1[1])
             pattern = re.compile(re.escape(str(remove_str)), re.IGNORECASE)
             pr.text = pattern.sub('', pr.text)
-            pr.text = re.sub('\^', '', pr.text)
+            pr.text = re.sub(r'\^', '', pr.text)
 
     #####################################################
     # If Verbose level 1 is enable print the database ###
@@ -293,7 +359,6 @@ if ref_file == "":
         print(citations)
         print('Number of Citations:')
         print(len(citations))
-
     #########################
     # search and replace ####
     #########################
@@ -307,7 +372,14 @@ if ref_file == "":
                 if str(section_0[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_0[i])), re.IGNORECASE)
-                    txt = str(1 + section_0_index[i])
+                    if (s1_f == 1):
+                        txt = str(1 + section_0_index[i])
+                    elif (s1_f == 2):
+                        txt = int_to_roman(1 + section_0_index[i])
+                    elif (s1_f == 3):
+                        txt = int_to_small(1 + section_0_index[i])
+                    else:
+                        txt = int_to_cap(1 + section_0_index[i])
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # sections lvl 1
@@ -315,8 +387,27 @@ if ref_file == "":
                 if str(section_1[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_1[i])), re.IGNORECASE)
-                    txt = str(1 + section_1_index[i])
-                    txt = str(father_0[i]) + '.' + txt
+                    #txt = str(1 + section_1_index[i])
+                    #txt = str(father_0[i]) + '.' + txt
+                    #Father numbering
+                    if (s1_f == 1):
+                        father_txt = str(father_0[i])
+                    elif (s1_f == 2):
+                        father_txt = int_to_roman(father_0[i])
+                    elif (s1_f == 3):
+                        father_txt = int_to_small(father_0[i])
+                    else:
+                        father_txt = int_to_cap(father_0[i])
+                    #subsection numberin
+                    if (s2_f == 1):
+                        sub_txt = str(1 + section_1_index[i])
+                    elif (s2_f == 2):
+                        sub_txt = int_to_roman(1 + section_1_index[i])
+                    elif (s2_f == 3):
+                        sub_txt = int_to_small(1 + section_1_index[i])
+                    else:
+                        sub_txt = int_to_cap(1 + section_1_index[i])
+                    txt = father_txt + '.' + sub_txt
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # sections lvl 2
@@ -324,8 +415,38 @@ if ref_file == "":
                 if str(section_2[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(section_2[i])), re.IGNORECASE)
-                    txt = str(1 + section_2_index[i])
-                    txt = str(father_2_0[i]) + '.' + str(father_2_1[i]) + '.' + txt
+                    #txt = str(1 + section_2_index[i])
+                    #txt = str(father_2_0[i]) + '.' + str(father_2_1[i]) + '.' + txt
+
+                    #Father numbering
+                    if (s1_f == 1):
+                        father_1_txt = str(father_2_0[i])
+                    elif (s1_f == 2):
+                        father_1_txt = int_to_roman(father_2_0[i])
+                    elif (s1_f == 3):
+                        father_1_txt = int_to_small(father_2_0[i])
+                    else:
+                        father_1_txt = int_to_cap(father_2_0[i])
+                    #Father 2 numbering
+                    if (s2_f == 1):
+                        father_2_txt = str(father_2_1[i])
+                    elif (s2_f == 2):
+                        father_2_txt = int_to_roman(father_2_1[i])
+                    elif (s2_f == 3):
+                        father_2_txt = int_to_small(father_2_1[i])
+                    else:
+                        father_2_txt = int_to_cap(father_2_1[i])
+                    #subsection numberin
+                    if (s3_f == 1):
+                        sub_txt = str(1 + section_2_index[i])
+                    elif (s3_f == 2):
+                        sub_txt = int_to_roman(1 + section_2_index[i])
+                    elif (s3_f == 3):
+                        sub_txt = int_to_small(1 + section_2_index[i])
+                    else:
+                        sub_txt = int_to_cap(1 + section_2_index[i])
+
+                    txt = father_1_txt + '.' + father_1_txt + '.' + sub_txt
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # figures
@@ -349,7 +470,17 @@ if ref_file == "":
                 if str(tables[i]).lower() in inline[j].text.lower():
                     #print(inline[j].text)
                     pattern = re.compile(re.escape('ref' + str(tables[i])), re.IGNORECASE)
-                    txt = str(1 + i)
+                    
+                    #subsection numberin
+                    if (tbl_f == 1):
+                        txt = str(1 + i)
+                    elif (tbl_f == 2):
+                        txt = int_to_roman(1 + i)
+                    elif (tbl_f == 3):
+                        txt = int_to_small(1 + i)
+                    else:
+                        txt = int_to_cap(1 + i)
+
                     inline[j].text = pattern.sub(txt, inline[j].text)
 
             # citations
@@ -513,7 +644,15 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(tables[i])), re.IGNORECASE)
-                        txt = str(1 + i)
+                        #table numberin
+                        if (tbl_f == 1):
+                            txt = str(1 + i)
+                        elif (tbl_f == 2):
+                            txt = int_to_roman(1 + i)
+                        elif (tbl_f == 3):
+                            txt = int_to_small(1 + i)
+                        else:
+                            txt = int_to_cap(1 + i)
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
         # section lvl 0
@@ -585,8 +724,25 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_1[i])), re.IGNORECASE)
-                        txt = str(1 + section_1_index[i])
-                        txt = str(father_0[i]) + '.' + txt
+                        #Father numbering
+                        if (s1_f == 1):
+                            father_txt = str(father_0[i])
+                        elif (s1_f == 2):
+                            father_txt = int_to_roman(father_0[i])
+                        elif (s1_f == 3):
+                            father_txt = int_to_small(father_0[i])
+                        else:
+                            father_txt = int_to_cap(father_0[i])
+                        #subsection numberin
+                        if (s2_f == 1):
+                            sub_txt = str(1 + section_1_index[i])
+                        elif (s2_f == 2):
+                            sub_txt = int_to_roman(1 + section_1_index[i])
+                        elif (s2_f == 3):
+                            sub_txt = int_to_small(1 + section_1_index[i])
+                        else:
+                            sub_txt = int_to_cap(1 + section_1_index[i])
+                        txt = father_txt + '.' + sub_txt
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
         # section lvl 2
@@ -622,8 +778,25 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_2[i])), re.IGNORECASE)
-                        txt = str(1 + section_2_index[i])
-                        txt = str(father_2_0[i]) + '.' + str(father_2_1[i]) + '.' + txt
+                        #Father numbering
+                        if (s1_f == 1):
+                            father_txt = str(father_0[i])
+                        elif (s1_f == 2):
+                            father_txt = int_to_roman(father_0[i])
+                        elif (s1_f == 3):
+                            father_txt = int_to_small(father_0[i])
+                        else:
+                            father_txt = int_to_cap(father_0[i])
+                        #subsection numberin
+                        if (s2_f == 1):
+                            sub_txt = str(1 + section_1_index[i])
+                        elif (s2_f == 2):
+                            sub_txt = int_to_roman(1 + section_1_index[i])
+                        elif (s2_f == 3):
+                            sub_txt = int_to_small(1 + section_1_index[i])
+                        else:
+                            sub_txt = int_to_cap(1 + section_1_index[i])
+                        txt = father_txt + '.' + sub_txt
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
                 # print(p.text)
@@ -652,7 +825,35 @@ if ref_file == "":
                             print(inline[j].text)
 
                         pattern = re.compile(re.escape('ref' + str(section_3[i])), re.IGNORECASE)
-                        txt = str(father_3_0[i]+1) + '.' + str(father_3_1[i]+1) + '.' + str(father_3_2[i]+1) + '.' + str(1 + i)
+                        #Father numbering
+                        if (s1_f == 1):
+                            father_1_txt = str(father_2_0[i])
+                        elif (s1_f == 2):
+                            father_1_txt = int_to_roman(father_2_0[i])
+                        elif (s1_f == 3):
+                            father_1_txt = int_to_small(father_2_0[i])
+                        else:
+                            father_1_txt = int_to_cap(father_2_0[i])
+                        #Father 2 numbering
+                        if (s2_f == 1):
+                            father_2_txt = str(father_2_1[i])
+                        elif (s2_f == 2):
+                            father_2_txt = int_to_roman(father_2_1[i])
+                        elif (s2_f == 3):
+                            father_2_txt = int_to_small(father_2_1[i])
+                        else:
+                            father_2_txt = int_to_cap(father_2_1[i])
+                        #subsection numberin
+                        if (s3_f == 1):
+                            sub_txt = str(1 + section_2_index[i])
+                        elif (s3_f == 2):
+                            sub_txt = int_to_roman(1 + section_2_index[i])
+                        elif (s3_f == 3):
+                            sub_txt = int_to_small(1 + section_2_index[i])
+                        else:
+                            sub_txt = int_to_cap(1 + section_2_index[i])
+
+                        txt = father_1_txt + '.' + father_1_txt + '.' + sub_txt
                         inline[j].text = pattern.sub(txt, inline[j].text)
 
 
