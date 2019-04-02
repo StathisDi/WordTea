@@ -46,21 +46,31 @@ Those should be written as one word.
 
 ## Running the script
 
+
+To run the script run the following command:
+
+`$ python Doc_parse_v2 <source .docx> <destination .pdf> <temporary .docx file>`
+
+Use `$ python Doc_parse_v2 --help` for details on extra options.
+
+Some available options:
+- -s1       : Format of the section 1 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.
+- -s2       : Format of the section 2 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.
+- -s3       : Format of the section 3 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.
+- -table    : Format of the table reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.
+- --verbose : Enable Verbose level 2, extreme error print for script debug.
+- --silent  : Disable Verbose level 1, basic status print for missed references and citations inside the document.
+
+### Note:
+The external file option is not fully supported and it is under development.
+
+## Requirements 
 In order to run the script there are the following requirements.
 - Python 3
 - comtypes package
 - python-docx package
 
 The python packages can be installed by using **pip**
-
-To run the script run the following command:
-
-`$ python Doc_parse_v2 <source .docx> <destination .pdf> <temporary .docx file>`
-
-
-## Packages needed
-- comtypes
-- python-docx
 
 To install in windows use pip3.exe install <package name> from a command window. For mac or linux you can use the pip3 command from the terminal.
 

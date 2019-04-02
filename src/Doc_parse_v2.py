@@ -46,7 +46,7 @@ parser.add_argument('pdfFile', help='Path to the output pdf file.')
 parser.add_argument('tmpFile', help='Path to the output temporary file.')
 parser.add_argument('-r', metavar='ref', help='Path to the reference file (if a reference file is to be used).')
 parser.add_argument('-i', metavar='iter', help='Max iterations used when searching to complete a cross-reference tag, default 5.', default=5)
-parser.add_argument('--silient', action='store_false', help='Disable Verbose level 1, basic status print for missed references and citations inside the document')
+parser.add_argument('--silent', action='store_false', help='Disable Verbose level 1, basic status print for missed references and citations inside the document')
 parser.add_argument('--verbose', action='store_true', help='Enable Verbose level 2, extreme error print for script debug')
 parser.add_argument('-s1', metavar='s1_format', help='Format of the section 1 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
 parser.add_argument('-s2', metavar='s2_format', help='Format of the section 2 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.', default=1)
@@ -160,7 +160,7 @@ wdFormatPDF = 17
 in_file = os.path.abspath(args.inFile)
 out_file = os.path.abspath(args.pdfFile)
 tmp_file = os.path.abspath(args.tmpFile)
-v1 = args.silient
+v1 = args.silent
 v2 = args.verbose
 max = args.i
 s1_f = int(args.s1)
