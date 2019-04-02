@@ -1,19 +1,16 @@
 # DocParser
-Python script for parsing docx files and automatically create the references for sections and 3 levels of subsections, figures, tables and citations. The references need to be declared inside the text in a specific format.
+Python script for parsing docx files and automatically create the references for sections and 2 levels of subsections, figures, tables and citations. The references need to be declared inside the text in a specific format.
 
 ## Declarations
 Create a label for the section, figures, etc. using the following format:
 
 ### Section
-**^sec0{`< label >`}^**
-
-### LVL 1 subsections
 **^sec1{`< label >`}^**
 
-### LVL 2 subsections
+### LVL 1 subsections
 **^sec2{`< label >`}^**
 
-### LVL 3 subsections
+### LVL 2 subsections
 **^sec3{`< label >`}^**
 
 ### Figures
