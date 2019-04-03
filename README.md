@@ -1,5 +1,6 @@
 # DocParser
 Python script for parsing docx files and automatically create the references for sections and 2 levels of subsections, figures, tables and citations. The references need to be declared inside the text in a specific format.
+This tool enables latex like cross-reference capabilities inside MS Word documents without the use of Add-Ins.
 
 ## Declarations
 Create a label for the section, figures, etc. using the following format:
