@@ -92,6 +92,7 @@ ENV/
 
 /documents
 .vscode/settings.json
+<<<<<<< HEAD
 *.pro
 *.user
 *.pro
@@ -103,3 +104,13 @@ src/gui/build-WordTex-Desktop_Qt_5_12_2_MinGW_64_bit-Debug/Makefile
 *.exe
 *.stash
 src/gui/WordTex/WordTex.pro
+=======
+*.stash
+*.o
+*.exe
+src/gui/build-WordTex-Desktop_Qt_5_12_2_MinGW_64_bit-Debug/Makefile
+*.Debug
+*.Release
+*.pro
+*.user
+>>>>>>> master
