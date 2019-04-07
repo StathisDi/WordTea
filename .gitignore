@@ -92,3 +92,14 @@ ENV/
 
 /documents
 .vscode/settings.json
+*.pro
+*.user
+*.pro
+*.pro
+*.Release
+*.Debug
+src/gui/build-WordTex-Desktop_Qt_5_12_2_MinGW_64_bit-Debug/Makefile
+*.o
+*.exe
+*.stash
+src/gui/WordTex/WordTex.pro
