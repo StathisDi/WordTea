@@ -1,5 +1,5 @@
-# DocParser
-Python script for parsing docx files and automatically create the references for sections and 2 levels of subsections, figures, tables and citations. The references need to be declared inside the text in a specific format.
+# WordTea
+Python script for parsing word .docx files and automatically create the references for sections and 2 levels of subsections, figures, tables and citations. The references need to be declared inside the text in a specific format.
 This tool enables latex like cross-reference capabilities inside MS Word documents without the use of Add-Ins.
 
 ## Declarations
@@ -75,15 +75,15 @@ To install in windows use pip3.exe install <package name> from a command window.
 
 # LICENSE
 
-DocParser is free software: you can redistribute it and/or modify   
+WordTea is free software: you can redistribute it and/or modify   
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or   
 (at your option) any later version.                                 
                                                                     
-DocParser is distributed in the hope that it will be useful,        
+WordTea is distributed in the hope that it will be useful,        
 but WITHOUT ANY WARRANTY; without even the implied warranty of      
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
 GNU General Public License for more details.                 
                                                                     
 You should have received a copy of the GNU General Public License   
-along with DocParser, see `COPYING` file.  If not, see <https://www.gnu.org/licenses/>. 
+along with WordTea, see `COPYING` file.  If not, see <https://www.gnu.org/licenses/>. 
