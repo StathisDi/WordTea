@@ -93,7 +93,7 @@ def __main__():
     ###########################################################
     # Use parser to get the cmd arguments #####################
     ###########################################################
-    parser = argparse.ArgumentParser(description='Word document parser. Generates citations and cross-references from latex like text in word document files.')
+    parser = argparse.ArgumentParser(description='WordTea: Word document parser. Generates citations and cross-references from latex like text in word document files.')
     parser.add_argument('inFile', help='Path to the input file.')
     parser.add_argument('pdfFile', help='Path to the output pdf file.')
     parser.add_argument('tmpFile', help='Path to the output temporary file.')

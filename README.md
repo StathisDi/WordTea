@@ -47,9 +47,9 @@ Those should be written as one word.
 
 To run the script run the following command:
 
-`$ python Doc_parse_v2 <source .docx> <destination .pdf> <temporary .docx file>`
+`$ python WordTea.py <source .docx> <destination .pdf> <temporary .docx file>`
 
-Use `$ python Doc_parse_v2 --help` for details on extra options.
+Use `$ python WordTea.py --help` for details on extra options.
 
 Some available options:
 - -s1       : Format of the section 1 reference style. Use 1 for normal numbering, 2 for Latin, 3 for small letter, 4 for capital letter, default 1.
