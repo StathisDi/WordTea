@@ -1,25 +1,25 @@
 #! python3
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
-# email         : stathis@kth
+# email         : stathis@kth.se
 # Last edited   : 5/5/2018
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
-#This file is part of DocParser.                                          #
+#This file is part of WordTea.                                          #
 #                                                                         #
-#    DocParser is free software: you can redistribute it and/or modify    #
+#    WordTea is free software: you can redistribute it and/or modify    #
 #    it under the terms of the GNU General Public License as published by #
 #    the Free Software Foundation, either version 3 of the License, or    #
 #    (at your option) any later version.                                  #
 #                                                                         #
-#    DocParser is distributed in the hope that it will be useful,         #
+#    WordTea is distributed in the hope that it will be useful,         #
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        #
 #    GNU General Public License for more details.                         #
 #                                                                         #
 #    You should have received a copy of the GNU General Public License    #
-#    along with DocParser.  If not, see <https://www.gnu.org/licenses/>.  #
+#    along with WordTea.  If not, see <https://www.gnu.org/licenses/>.  #
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
