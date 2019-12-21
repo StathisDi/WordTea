@@ -1,8 +1,8 @@
 #! python3
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
-# email         : stathis@kth.se
-# Last edited   : 5/5/2018
+# email         : stathis@kth.se, sta.dimitris@gmail.com
+# Last edited   : 21/12/2019
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
@@ -34,6 +34,8 @@ import re
 import comtypes.client
 import csv
 import docx
+import WordTea_functions
+from WordTea_functions import *
 from docx import Document
 from docx.shared import Inches
 
@@ -54,39 +56,39 @@ from docx.shared import Inches
 ###########################################################
 # Functions ###############################################
 ###########################################################
-
-# Function to convert integer to latin numera
-def int_to_roman(input):
-    if not isinstance(input, type(1)):
-        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
-    if not 0 < input < 21:
-        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
-    ints = ( 40, 10,  9,   5,  4,   1)
-    nums = ('XL','X','IX','V','IV','I')
-    result = []
-    for i in range(len(ints)):
-        count = int(input / ints[i])
-        result.append(nums[i] * count)
-        input -= ints[i] * count
-    return ''.join(result)
-
-# Function to convert integer to small letters
-def int_to_small(input):
-    if not isinstance(input, type(1)):
-        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
-    if not 0 < input < 21:
-        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
-    nums = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' , 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't')
-    return nums[input]
-
-# Function to convert integer to capital letters
-def int_to_cap(input):
-    if not isinstance(input, type(1)):
-        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
-    if not 0 < input < 21:
-        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
-    nums = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' , 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'E', 'S', 'T')
-    return nums[input]
+#
+## Function to convert integer to latin numera
+#def int_to_roman(input):
+#    if not isinstance(input, type(1)):
+#        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+#    if not 0 < input < 21:
+#        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+#    ints = ( 40, 10,  9,   5,  4,   1)
+#    nums = ('XL','X','IX','V','IV','I')
+#    result = []
+#    for i in range(len(ints)):
+#        count = int(input / ints[i])
+#        result.append(nums[i] * count)
+#        input -= ints[i] * count
+#    return ''.join(result)
+#
+## Function to convert integer to small letters
+#def int_to_small(input):
+#    if not isinstance(input, type(1)):
+#        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+#    if not 0 < input < 21:
+#        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+#    nums = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' , 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't')
+#    return nums[input]
+#
+## Function to convert integer to capital letters
+#def int_to_cap(input):
+#    if not isinstance(input, type(1)):
+#        raise TypeError("Integer to Latin: Expected integer, got %s" % type(input))
+#    if not 0 < input < 21:
+#        raise ValueError("Integer to Latin: Argument must be between 1 and 20")
+#    nums = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' , 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'E', 'S', 'T')
+#    return nums[input]
 
 # Main function 
 def __main__():
