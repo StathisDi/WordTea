@@ -6,20 +6,20 @@
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
-#This file is part of WordTea.                                          #
+#This file is part of WordTea.                                            #
 #                                                                         #
-#    WordTea is free software: you can redistribute it and/or modify    #
+#    WordTea is free software: you can redistribute it and/or modify      #
 #    it under the terms of the GNU General Public License as published by #
 #    the Free Software Foundation, either version 3 of the License, or    #
 #    (at your option) any later version.                                  #
 #                                                                         #
-#    WordTea is distributed in the hope that it will be useful,         #
+#    WordTea is distributed in the hope that it will be useful,           #
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        #
 #    GNU General Public License for more details.                         #
 #                                                                         #
 #    You should have received a copy of the GNU General Public License    #
-#    along with WordTea.  If not, see <https://www.gnu.org/licenses/>.  #
+#    along with WordTea.  If not, see <https://www.gnu.org/licenses/>.    #
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -884,7 +884,24 @@ def __main__():
                     print(str(ref_list_source[i]))
                     pattern = re.compile(re.escape(str(ref_list_source[i])), re.IGNORECASE)
                     p.text = pattern.sub(str(ref_list_replace[i]), p.text)
-
+    ############################################################
+    #Delete all list to clean up the memory
+    del section_0       
+    del section_0_index 
+    del section_1       
+    del section_1_index 
+    del father_0        
+    del section_2       
+    del father_2_0      
+    del father_2_1      
+    del section_2_index 
+    del figures         
+    del tables          
+    del citations       
+    del equations       
+    del ref_list_source 
+    del ref_list_replace
+    ############################################################
     document.save(tmp_file)
 
     word = comtypes.client.CreateObject('Word.Application')
