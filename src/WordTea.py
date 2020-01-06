@@ -481,10 +481,12 @@ def __main__():
                 # citations
                 for i in range(len(citations)):
                     if str(citations[i]).lower() in inline[j].text.lower():
-                        #print(inline[j].text)
+                        print(inline[j].text)
+                        print(i)
                         pattern = re.compile(re.escape('cit' + str(citations[i])), re.IGNORECASE)
                         txt = str(1 + i)
                         inline[j].text = pattern.sub(txt, inline[j].text)
+                        print(inline[j].text)
 
         ################################################
         # Second run to fix misses, removes format #####
