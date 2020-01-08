@@ -23,6 +23,17 @@
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+import sys
+import argparse
+import os
+import re
+import comtypes.client
+import csv
+import docx
+import WordTea_functions
+from WordTea_functions import *
+from docx import Document
+from docx.shared import Inches
 
 class reference_list:
     """
@@ -43,7 +54,7 @@ class reference_list:
     ################################################################################################
     # Begin : Constructor                                                                          #
     ################################################################################################
-    def __init__(self, nm, tg, lb, st, pr=None):
+    def __init__(self, nm, tg, lb, st=1, pr=None):
         """
         ####################################################################################
         # Function:                                                                        #
@@ -83,31 +94,67 @@ class reference_list:
 # Begin : Build list function                                                                  #
 ################################################################################################
 
-    def build_list(self, text, verbose):
+    def buildList(self, text, v1, v2):
         """
         ####################################################################################
         # Function:                                                                        #
-        #        build_list                                                                #
+        #        buildList                                                                #
         #                                                                                  #
         # Description:                                                                     #
         #        This function searches the input text for related labels. The labels are  #
         #        related to the class variable label set during the creation of the class. #
         #                                                                                  #
         # Input Arguments:                                                                 #
-        #        text    : Text to be searche for related labels                           #
-        #        verbose : Verbose level                                                   #
+        #        text    : Text to be searched for related labels                          #
+        #        v1      : Verbose level 1                                                 #
+        #        v2      : Verbose level 2                                                 #
         #                                                                                  #
         # Return Arguments:                                                                #
         #        text : Function overwrites and returns the text with the label removed    #
         #                                                                                  #
+        # TODO : Better verbose                                                            #
         ####################################################################################
         """
-        self.ref_list.append(text)
-        print(self.name)
-        print(self.ref_list)
-        self.counter = self.counter + 1
-        if self.parent is not None:
-            self.parent_count.append(self.parent.counter)
+        if v2:
+            print('###############################################################################')
+            print('#            Build list starts Here                                           #')
+            print('###############################################################################')
+        pr = text
+        txt_label = str(self.label)
+        if txt_label.lower() in pr.text.lower():
+            # Loop added to work with runs (strings with same style)
+            tmp = re.split(r'\^', pr.text)
+            # This list will contain all the strings that should be deleted from the text
+            remove_str = list()
+            for pt in tmp:
+                tmp_string = txt_label + '{'
+                if tmp_string.lower() in pt.lower():
+                    remove_str.append(pt)
+                    tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
+                    if v2:
+                        print(tmp1)
+                    # Add the reference to the list and if there is a parrent, register its counter
+                    self.ref_list.append(tmp1[1])
+                    self.counter += 1
+                    if not (self.parent is None):
+                        self.parent_count.append(self.parent.counter)
+            # Go through the list and delete the labels
+            for toDelete in remove_str:
+                if v2:
+                    print('Remove string')
+                    print(toDelete)
+                pattern = re.compile(re.escape(str(toDelete)), re.IGNORECASE)
+                if v2:
+                    print('Before pattern')
+                    print(pr.text)
+                pr.text = re.sub(pattern,'', pr.text)
+                if v2:
+                    print('After pattern')
+                    print(pr.text)
+                pr.text = re.sub(r'\^', '', pr.text)
+            del remove_str
+        text = pr
         return
 
 ################################################################################################
@@ -118,7 +165,81 @@ class reference_list:
 # Begin : Match and replace function                                                           #
 ################################################################################################
 
-    def matchNreplace(self, text):
+    def matchNreplace(self, text, v1, v2):
+        """
+        ####################################################################################
+        # Function:                                                                        #
+        #        matchNreplace                                                             #
+        #                                                                                  #
+        # Description:                                                                     #
+        #        This function searches the input text for related cross-references.       #
+        #        the cross-references are depended to the class variable tag set during    #
+        #        the creation of the class.                                                #
+        #                                                                                  #
+        # Input Arguments:                                                                 #
+        #        text    : Text to be searched for related tags                            #
+        #        v1      : Verbose level 1                                                 #
+        #        v2      : Verbose level 2                                                 #
+        #                                                                                  #
+        # Return Arguments:                                                                #
+        #        text : Function overwrites and returns the text with the label removed    #
+        #                                                                                  #
+        # TODO : Better verbose                                                            #
+        ####################################################################################
+        """
+        if v2:
+            print('###############################################################################')
+            print('#            Replace starts Here                                              #')
+            print('###############################################################################')
+
+        pr = text
+        txt_label = 'ref:'+str(self.tag)
+        if txt_label.lower() in pr.text.lower():
+            # Loop added to work with runs (strings with same style)
+            tmp = re.split(r'\^', pr.text)
+            # This list will contain all the strings that should be deleted/replaced from the text
+            remove_str = list()
+            replace_text = list()
+            for pt in tmp:
+                tmp_string = txt_label + '{'
+                if tmp_string.lower() in pt.lower():
+                    remove_str.append(pt)
+                    tmp1 = re.split('{|}', pt)
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1]) # tmp1 holds the cross-reference 
+                    if v2:
+                        print(tmp1)
+                    # Go through the ref list and find the cross-reference that matches this one
+                    for i in range(len(self.ref_list)):
+                        if (tmp1[1].lower() == self.ref_list[i]):
+                            replace_text.append(i)
+            # Go through the list and delete the labels
+            if v2: 
+                print('!!!!!!!!!!!!!')
+                print('Replace list')
+                print(remove_str)
+            i = 0
+            for toDelete in remove_str:
+                if v2:
+                    print('##############')
+                    print('Replace string')
+                    print(toDelete)
+                pattern = re.compile(
+                    re.escape(str(toDelete)), re.IGNORECASE)
+                if v2:
+                    print('Before replace pattern')
+                    print(pr.text)
+                pr.text = re.sub(pattern, str(replace_text[i]+1), pr.text)
+                if v2:
+                    print('After replace pattern')
+                    print(pr.text)
+                    print('##############')
+                pr.text = re.sub(r'\^', '', pr.text)
+                i +=1
+            print('!!!!!!!!!!!!!')
+            del i
+            del replace_text
+            del remove_str
+        text = pr
         return
 
 ################################################################################################
