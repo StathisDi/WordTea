@@ -2,7 +2,7 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Last edited   : 21/12/2019
+# Last edited   : 09/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
@@ -23,8 +23,19 @@
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+# TODO : Comment the function
+# TODO : Create a util class
+
+import re
+import comtypes.client
+import docx
+from docx import Document
+from docx.shared import Inches
+
 
 # Function to convert integer to latin numera
+
+
 def int_to_roman(input):
     if not isinstance(input, type(1)):
         raise TypeError(
@@ -65,3 +76,67 @@ def int_to_cap(input):
     nums = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'E', 'S', 'T')
     return nums[input]
+
+
+def Match_label(inline, j, found, v2, v1, error):
+    tmp_txt = ''
+    if ('^' in inline[j].text):
+        found = True
+        tmp_txt = inline[j].text.lower()
+        if v2:
+            print('First inline: '+tmp_txt)
+        k = 1
+        flag = True
+        while flag:
+            pattern = r'\^[^\^]+\^'
+            if re.search(pattern, tmp_txt):
+                if v2:
+                    print('##########################################################')
+                    print('             Full Label found:                            ')
+                    print(' Label : ' + tmp_txt)
+                    print('##########################################################')
+                # Remove the label from the inline text
+                inline[j].text = re.sub(pattern, '', inline[j].text)
+                flag = False  # Exit the loop if you find the full label
+            else:
+                if '^' in inline[j + k].text:
+                    # Remove the initial part of the label from the first inline text
+                    toRemove = r'\^[^\^]+$'
+                    inline[j].text = re.sub(toRemove, '', inline[j].text)
+                    if v2:
+                        print('##########################################################')
+                        print('                Label is in pieces                        ')
+                        print('Inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
+                    split_text = re.split(r'\^', inline[j + k].text)
+                    tmp_txt += (split_text[0].lower() + '^')
+                    if v2:
+                        print('Text list :')
+                        print(split_text)
+                        print('Final temporary text = ' + tmp_txt)
+                    # inline[j + k].text = split_text[1]
+                    inline[j + k].text = ''
+                    if v2:
+                        print('New inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
+                        print('##########################################################')
+                    flag = False  # Exit the loop if you complete the label
+                else:
+                    tmp_txt += inline[j + k].text.lower()
+                    temporary_check = j + k
+                    if (temporary_check < (len(inline) - 1)):
+                        inline[j + k].text = ''
+                        k += 1
+                    else:
+                        print("!!!WARNING!!! Incomplete label :" + inline[j].text)
+                        flag = False
+                        error = True
+                        found = False
+    return [tmp_txt, found]
+
+
+def FindLabelInText(text, label, v2, v1):
+    tmp1 = re.split('{|}', text)
+    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
+    if v1:
+        print(tmp1)
+        print("Found Label : "+str(tmp1[1]))
+    return tmp1[1]

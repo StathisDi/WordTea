@@ -2,7 +2,7 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Last edited   : 21/12/2019
+# Last edited   : 09/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
@@ -23,17 +23,14 @@
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import sys
-import argparse
-import os
 import re
 import comtypes.client
-import csv
 import docx
 import WordTea_functions
 from WordTea_functions import *
 from docx import Document
 from docx.shared import Inches
+
 
 class reference_list:
     """
@@ -94,68 +91,47 @@ class reference_list:
 # Begin : Build list function                                                                  #
 ################################################################################################
 
-    def buildList(self, text, v1, v2):
+    def buildList(self, pr, v1, v2):
         """
         ####################################################################################
         # Function:                                                                        #
-        #        buildList                                                                #
+        #        buildList                                                                 #
         #                                                                                  #
         # Description:                                                                     #
         #        This function searches the input text for related labels. The labels are  #
         #        related to the class variable label set during the creation of the class. #
         #                                                                                  #
         # Input Arguments:                                                                 #
-        #        text    : Text to be searched for related labels                          #
+        #        pr      : Text to be searched for related labels                          #
         #        v1      : Verbose level 1                                                 #
         #        v2      : Verbose level 2                                                 #
         #                                                                                  #
         # Return Arguments:                                                                #
-        #        text : Function overwrites and returns the text with the label removed    #
+        #        pr      : Function overwrites and returns the text with the label removed #
         #                                                                                  #
-        # TODO : Better verbose                                                            #
         ####################################################################################
         """
         if v2:
-            print('###############################################################################')
-            print('#            Build list starts Here                                           #')
-            print('###############################################################################')
-        pr = text
+            print('# Building list paragraph : \n'+pr.text)
+        #pr = text
         txt_label = str(self.label)
+        error = False
         if txt_label.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split(r'\^', pr.text)
-            # This list will contain all the strings that should be deleted from the text
-            remove_str = list()
-            for pt in tmp:
-                tmp_string = txt_label + '{'
-                if tmp_string.lower() in pt.lower():
-                    remove_str.append(pt)
-                    tmp1 = re.split('{|}', pt)
-                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
-                    if v2:
-                        print(tmp1)
-                    # Add the reference to the list and if there is a parrent, register its counter
-                    self.ref_list.append(tmp1[1])
+            inline = pr.runs
+            for j in range(len(inline)):
+                found = False
+                [tmp_text, found] = Match_label(inline, j, found, v2, v1, error)
+                # If text is found put it in the list
+                if found:
+                    if v1:
+                        print("Info: Match label final text : " + tmp_text)
+                    tmp = FindLabelInText(tmp_text, self.label, v2, v1)
+                    self.ref_list.append(tmp)
                     self.counter += 1
                     if not (self.parent is None):
                         self.parent_count.append(self.parent.counter)
-            # Go through the list and delete the labels
-            for toDelete in remove_str:
-                if v2:
-                    print('Remove string')
-                    print(toDelete)
-                pattern = re.compile(re.escape(str(toDelete)), re.IGNORECASE)
-                if v2:
-                    print('Before pattern')
-                    print(pr.text)
-                pr.text = re.sub(pattern,'', pr.text)
-                if v2:
-                    print('After pattern')
-                    print(pr.text)
-                pr.text = re.sub(r'\^', '', pr.text)
-            del remove_str
-        text = pr
-        return
+        return 1
 
 ################################################################################################
 # End : Build list function                                                                    #
@@ -205,7 +181,7 @@ class reference_list:
                 if tmp_string.lower() in pt.lower():
                     remove_str.append(pt)
                     tmp1 = re.split('{|}', pt)
-                    tmp1[1] = re.sub(r"\s+", "", tmp1[1]) # tmp1 holds the cross-reference 
+                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])  # tmp1 holds the cross-reference
                     if v2:
                         print(tmp1)
                     # Go through the ref list and find the cross-reference that matches this one
@@ -213,7 +189,7 @@ class reference_list:
                         if (tmp1[1].lower() == self.ref_list[i]):
                             replace_text.append(i)
             # Go through the list and delete the labels
-            if v2: 
+            if v2:
                 print('!!!!!!!!!!!!!')
                 print('Replace list')
                 print(remove_str)
@@ -234,7 +210,7 @@ class reference_list:
                     print(pr.text)
                     print('##############')
                 pr.text = re.sub(r'\^', '', pr.text)
-                i +=1
+                i += 1
             print('!!!!!!!!!!!!!')
             del i
             del replace_text
@@ -267,4 +243,37 @@ class reference_list:
 
 ################################################################################################
 # End : Match and replace function                                                             #
+################################################################################################
+
+################################################################################################
+# Begin : Print list                                                                           #
+################################################################################################
+
+
+    def printList(self):
+        print("Reference list of " + self.name)
+        print(self.ref_list)
+        return 1
+
+################################################################################################
+# End : Print list                                                                             #
+################################################################################################
+
+################################################################################################
+# Begin : Print Parent list                                                                    #
+################################################################################################
+
+    def printParentList(self):
+        rtn = 0
+        if not(self.parent is None):
+            print("Parent list of " + self.name)
+            print(self.parent_count)
+            rtn = 1
+        else:
+            print("No parent for " + self.name + "!")
+            rtn = 0
+        return rtn
+
+################################################################################################
+# End : Print Parent list                                                                      #
 ################################################################################################
