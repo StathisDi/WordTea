@@ -129,6 +129,7 @@ class reference_list:
                     if v2:
                         print("Paragraph after : \n" + pr.text)
                     tmp = FindLabelInText(tmp_text, self.label, v2, v1)
+                    # Store the low case label
                     self.ref_list.append(tmp)
                     self.counter += 1
                     if not (self.parent is None):
@@ -143,7 +144,7 @@ class reference_list:
 # Begin : Match and replace function                                                           #
 ################################################################################################
 
-    def matchNreplace(self, text, v1, v2):
+    def matchNreplace(self, pr, v1, v2):
         """
         ####################################################################################
         # Function:                                                                        #
@@ -155,70 +156,40 @@ class reference_list:
         #        the creation of the class.                                                #
         #                                                                                  #
         # Input Arguments:                                                                 #
-        #        text    : Text to be searched for related tags                            #
+        #        pr      : Text to be searched for related tags                            #
         #        v1      : Verbose level 1                                                 #
         #        v2      : Verbose level 2                                                 #
         #                                                                                  #
         # Return Arguments:                                                                #
-        #        text : Function overwrites and returns the text with the label removed    #
+        #        pr      : Function overwrites and returns the text with the label removed #
         #                                                                                  #
         # TODO : Better verbose                                                            #
         ####################################################################################
         """
         if v2:
-            print('###############################################################################')
-            print('#            Replace starts Here                                              #')
-            print('###############################################################################')
-
-        pr = text
-        txt_label = 'ref:'+str(self.tag)
+            print('# Searching references in paragraph : \n'+pr.text)
+        #pr = text
+        txt_label = ':'+str(self.tag)+'{'
+        error = False
         if txt_label.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
-            tmp = re.split(r'\^', pr.text)
-            # This list will contain all the strings that should be deleted/replaced from the text
-            remove_str = list()
-            replace_text = list()
-            for pt in tmp:
-                tmp_string = txt_label + '{'
-                if tmp_string.lower() in pt.lower():
-                    remove_str.append(pt)
-                    tmp1 = re.split('{|}', pt)
-                    tmp1[1] = re.sub(r"\s+", "", tmp1[1])  # tmp1 holds the cross-reference
+            inline = pr.runs
+            for j in range(len(inline)):
+                found = False
+                [tmp_text, found] = Match_Tag(inline, j, found, v2, v1, error)
+                # If text is found put it in the list
+                if found:
+                    if v1:
+                        print("Info: Match Tag final text : " + tmp_text)
                     if v2:
-                        print(tmp1)
-                    # Go through the ref list and find the cross-reference that matches this one
-                    for i in range(len(self.ref_list)):
-                        if (tmp1[1].lower() == self.ref_list[i]):
-                            replace_text.append(i)
-            # Go through the list and delete the labels
-            if v2:
-                print('!!!!!!!!!!!!!')
-                print('Replace list')
-                print(remove_str)
-            i = 0
-            for toDelete in remove_str:
-                if v2:
-                    print('##############')
-                    print('Replace string')
-                    print(toDelete)
-                pattern = re.compile(
-                    re.escape(str(toDelete)), re.IGNORECASE)
-                if v2:
-                    print('Before replace pattern')
-                    print(pr.text)
-                pr.text = re.sub(pattern, str(replace_text[i]+1), pr.text)
-                if v2:
-                    print('After replace pattern')
-                    print(pr.text)
-                    print('##############')
-                pr.text = re.sub(r'\^', '', pr.text)
-                i += 1
-            print('!!!!!!!!!!!!!')
-            del i
-            del replace_text
-            del remove_str
-        text = pr
-        return
+                        print("Paragraph after : \n" + pr.text)
+                    #tmp = FindLabelInText(tmp_text, self.label, v2, v1)
+                    # Store the low case label
+                    # self.ref_list.append(tmp.lower)
+                    #self.counter += 1
+                    # if not (self.parent is None):
+                    #    self.parent_count.append(self.parent.counter)
+        return 1
 
 ################################################################################################
 # End : Match and replace function                                                             #
@@ -278,4 +249,26 @@ class reference_list:
 
 ################################################################################################
 # End : Print Parent list                                                                      #
+################################################################################################
+
+################################################################################################
+# Begin : Print                                                                                #
+################################################################################################
+
+    def __str__(self):
+        rtn = self.name + "\n"
+        rtn += "\t Label is: \t\t\t\t"
+        rtn += self.label
+        rtn += "\n\t Tag is: \t\t\t\t"
+        rtn += self.tag
+        rtn += "\n\t The chosen style is: \t\t\t"
+        rtn += str(self.style)
+        rtn += "\n\t The Number of references in the list: \t"
+        rtn += str(self.counter)
+        if not(self.parent is None):
+            rtn += ("\n\t Parent is: \t\t\t\t" + self.parent.name + "\n")
+        return rtn
+
+################################################################################################
+# End : Print                                                                                  #
 ################################################################################################

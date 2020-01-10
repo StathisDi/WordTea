@@ -111,6 +111,7 @@ def __main__():
     sec0 = reference_list("Section 0", "s0", "sect0")
     sec1 = reference_list("Section 1", "s1", "sect1", 1, sec0)
     tbl = reference_list("Table", "t", "tbl")
+    print(tbl)
     for pr in document.paragraphs:
         #print("Before :")
         # print(pr.text)
@@ -121,6 +122,7 @@ def __main__():
 
         #print("After :")
         # print(pr.text)
+    print(sec1)
     fig.printList()
     sec0.printList()
     sec1.printList()
@@ -130,15 +132,12 @@ def __main__():
     sec1.printParentList()
     tbl.printParentList()
     # exit()
-    # for pr in document.paragraphs:
-    #    print("Replace Before :")
-    #    print(pr.text)
-    #    parent_fig.matchNreplace(pr, True, True)
-    #    parent_fig.matchNreplace(pr, True, True)
-    #    parent_fig.matchNreplace(pr, True, True)
-    #    print("Replace After :")
-    #    print(pr.text)
+    for pr in document.paragraphs:
+        fig.matchNreplace(pr, True, True)
 
+    del sec0
+    del sec1
+    del tbl
     document.save(tmp_file)
 
     word = comtypes.client.CreateObject('Word.Application')
