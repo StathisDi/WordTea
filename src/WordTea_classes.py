@@ -126,6 +126,8 @@ class reference_list:
                 if found:
                     if v1:
                         print("Info: Match label final text : " + tmp_text)
+                    if v2:
+                        print("Paragraph after : \n" + pr.text)
                     tmp = FindLabelInText(tmp_text, self.label, v2, v1)
                     self.ref_list.append(tmp)
                     self.counter += 1

@@ -101,7 +101,7 @@ def Match_label(inline, j, found, v2, v1, error):
             else:
                 if '^' in inline[j + k].text:
                     # Remove the initial part of the label from the first inline text
-                    toRemove = r'\^[^\^]+$'
+                    toRemove = r'\^[^\^]*$'
                     inline[j].text = re.sub(toRemove, '', inline[j].text)
                     if v2:
                         print('##########################################################')
