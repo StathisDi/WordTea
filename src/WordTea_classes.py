@@ -177,18 +177,29 @@ class reference_list:
             for j in range(len(inline)):
                 found = False
                 [tmp_text, found] = Match_Tag(inline, j, found, v2, v1, error)
-                # If text is found put it in the list
+                # If text is found input the wright number
                 if found:
                     if v1:
                         print("Info: Match Tag final text : " + tmp_text)
                     if v2:
-                        print("Paragraph after : \n" + pr.text)
-                    #tmp = FindLabelInText(tmp_text, self.label, v2, v1)
-                    # Store the low case label
-                    # self.ref_list.append(tmp.lower)
-                    #self.counter += 1
-                    # if not (self.parent is None):
-                    #    self.parent_count.append(self.parent.counter)
+                        print("Paragraph after removal : \n" + pr.text)
+                    for i in range(len(self.ref_list)):
+                        if str(self.ref_list[i]).lower() in tmp_text.lower():
+                            if (self.style == 1):
+                                if (self.parent is None):
+                                    txt = str(1 + i)
+                            elif (self.style == 2):
+                                if (self.parent is None):
+                                    txt = int_to_roman(1 + i)
+                            elif (self.style == 3):
+                                if (self.parent is None):
+                                    txt = int_to_small(1 + i)
+                            else:
+                                if (self.parent is None):
+                                    txt = int_to_cap(1 + i)
+                            inline[j].text = txt
+                    if v2:
+                        print("Paragraph after replace : \n" + pr.text)
         return 1
 
 ################################################################################################
@@ -271,4 +282,16 @@ class reference_list:
 
 ################################################################################################
 # End : Print                                                                                  #
+################################################################################################
+
+################################################################################################
+# Begin : Search and find parrent hiearchy                                                     #
+################################################################################################
+
+    def parrentHier(self):
+        rtn = ''
+        return rtn
+
+################################################################################################
+# End : Search and find parrent hiearchy                                                       #
 ################################################################################################
