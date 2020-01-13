@@ -2,7 +2,8 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Last edited   : 21/12/2019
+# Version       : 2.0
+# Last edited   : 13/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
@@ -100,9 +101,9 @@ def __main__():
     if v2:
         print(max)
 
-    ref_file = ""
-    if (args.r) != None:
-        ref_file = os.path.abspath(args.r)
+    #ref_file = ""
+    #if (args.r) != None:
+    #    ref_file = os.path.abspath(args.r)
 
     #######################################
     print("Process: Open Document " + str(in_file) + ".")
