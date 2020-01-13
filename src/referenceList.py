@@ -365,7 +365,7 @@ class referenceList:
         for i in range(len(self.ref_list)):
             if (self.checkList[i] == 0):
                 print("##################!!!Warning!!!##################")
-                print("# Label "+str(self.ref_list[i])+" of class "+self.name+"\n"+"# Is not referenced anywhere in the text.")
+                print("# Label \""+str(self.ref_list[i])+"\" of list "+self.name+"\n"+"# Is not referenced anywhere in the text.")
                 print("#################################################")
         return 1
 
