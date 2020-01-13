@@ -101,7 +101,7 @@ The python packages can be installed by using **pip**
 To install in windows use pip3.exe install <package name> from a command window. For mac or linux you can use the pip3 command from the terminal.
 
 # Version Details:
- Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
+ Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
  email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : stathis@kth.se, sta.dimitris@gmail.com </br>
  Last edited : 21/12/2019 </br>
  version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 2.0</br>
