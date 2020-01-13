@@ -205,7 +205,7 @@ class referenceList:
                             if (self.parent is None):
                                 txt = formatSelect(self.count_list[i], self.style)
                             else:
-                                txt = self.parrentHier(i)
+                                txt = self.parrentHier(i, v2)
                                 txt += formatSelect(self.count_list[i], self.style)
                             inline[j].text += txt
                     if not tagInList:
@@ -331,23 +331,25 @@ class referenceList:
 # Begin : Search and find parrent hierarchy                                                    #
 ################################################################################################
 
-    def parrentHier(self, i):
+    def parrentHier(self, i, v2):
         rtn = ''
         if not (self.parent is None):
             #print("Parent Count of class " + self.name + " is : " + str(self.parent_count[i]))
             # self.parent.printIndexList()
             #print("Parent index for this count is : "+str(self.parent.count_list[self.parent_count[i]-1]))
-            parent_text = self.parent.parrentHier(self.parent_count[i] - 1)
+            parent_text = self.parent.parrentHier((self.parent_count[i] - 1), v2)
             #print("Parent text in class " + self.name + " is " + parent_text)
             #temp_self_list = self.count_list[i]
             #temporaryText = formatSelect(temp_self_list, self.style)
             #print("Temporary text in class " + self.name + " is " + temporaryText)
             rtn = parent_text + '.'
         else:
-            print("No parent in class : " + self.name + ".")
+            if v2:
+                print("No parent in class : " + self.name + ".")
             temp_self_list = self.count_list[i]
             rtn = formatSelect(temp_self_list, self.style)
-        print("Text to be returned from the call is : "+rtn)
+        if v2:
+            print("Text to be returned from the call is : "+rtn)
         return rtn
 
 ################################################################################################

@@ -223,6 +223,7 @@ def __main__():
     ###############################################################
     print("Process: Saving post-processed temporary .docx document and .pdf file.")
     word = comtypes.client.CreateObject('Word.Application')
+    # TODO Find how to use catch problem
     doc = word.Documents.Open(tmp_file)
     doc.SaveAs(out_file, FileFormat=wdFormatPDF)
     doc.Close()
