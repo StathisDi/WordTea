@@ -108,9 +108,10 @@ def __main__():
     print(reference_list.__doc__)
     print(reference_list.__init__.__doc__)
     fig = reference_list("Figure", "f", "fig")
-    sec0 = reference_list("Section 0", "s0", "sect0")
-    sec1 = reference_list("Section 1", "s1", "sect1", 1, sec0)
+    sec0 = reference_list("Section 0", "s0", "sect0", 2)
+    sec1 = reference_list("Section 1", "s1", "sect1", 2, sec0)
     tbl = reference_list("Table", "t", "tbl")
+    cite = reference_list("Citations", "cite", "cite")
     print(tbl)
     for pr in document.paragraphs:
         #print("Before :")
@@ -119,7 +120,7 @@ def __main__():
         sec0.buildList(pr, True, True)
         sec1.buildList(pr, True, True)
         tbl.buildList(pr, True, True)
-
+        cite.buildList(pr, True, True)
         #print("After :")
         # print(pr.text)
     print(sec1)
@@ -127,17 +128,35 @@ def __main__():
     sec0.printList()
     sec1.printList()
     tbl.printList()
+    cite.printList()
+    fig.printIndexList()
+    sec0.printIndexList()
+    sec1.printIndexList()
+    tbl.printIndexList()
+    cite.printIndexList()
     fig.printParentList()
     sec0.printParentList()
     sec1.printParentList()
     tbl.printParentList()
+    cite.printParentList()
     # exit()
     for pr in document.paragraphs:
         fig.matchNreplace(pr, True, True)
+        sec0.matchNreplace(pr, True, True)
+        sec1.matchNreplace(pr, True, True)
+        tbl.matchNreplace(pr, True, True)
+        cite.matchNreplace(pr, True, True)
 
+    fig.checkRefList()
+    sec0.checkRefList()
+    sec1.checkRefList()
+    tbl.checkRefList()
+    cite.checkRefList()
+    del fig
     del sec0
     del sec1
     del tbl
+    del cite
     document.save(tmp_file)
 
     word = comtypes.client.CreateObject('Word.Application')

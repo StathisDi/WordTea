@@ -204,3 +204,17 @@ def Match_Tag(inline, j, found, v2, v1, error):
                         error = True
                         found = False
     return [tmp_txt, found]
+
+
+# Function that transforms a number to a string according to the specifications of the formating
+def formatSelect(i, style):
+    rtn = ''
+    if (style == 1):
+        rtn = str(i)
+    elif (style == 2):
+        rtn = int_to_roman(i)
+    elif (style == 3):
+        rtn = int_to_small(i)
+    else:
+        rtn = int_to_cap(i)
+    return rtn

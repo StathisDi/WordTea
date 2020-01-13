@@ -42,7 +42,7 @@ class reference_list:
     #        This class is used to create a set (list) of references. The references   #
     #        can be citations, figures, sections etc. The class includes functions to  #
     #        read and replace references in the text according to specific format.     #
-    #        It also outputs warnings for possible formating erros in the final text.  #
+    #        It also outputs warnings for possible formating errors in the final text. #
     #                                                                                  #
     # TODO Need to write a build list function that builds the list from an input file #
     ####################################################################################
@@ -77,8 +77,11 @@ class reference_list:
         self.label = lb
         self.style = st
         self.counter = 0
+        self.count_list = list()
         self.ref_list = list()
         self.parent_count = list()
+        self.oldParent = 0
+        self.checkList = list()
         if pr is None:
             self.parent = None
         else:
@@ -113,7 +116,7 @@ class reference_list:
         """
         if v2:
             print('# Building list paragraph : \n'+pr.text)
-        #pr = text
+        # pr = text
         txt_label = str(self.label)
         error = False
         if txt_label.lower() in pr.text.lower():
@@ -131,9 +134,20 @@ class reference_list:
                     tmp = FindLabelInText(tmp_text, self.label, v2, v1)
                     # Store the low case label
                     self.ref_list.append(tmp)
+                    self.checkList.append(0)
                     self.counter += 1
                     if not (self.parent is None):
                         self.parent_count.append(self.parent.counter)
+                        if j == 0:
+                            self.count_list.append(1)
+                            self.parent.printIndexList()
+                            self.oldParent = self.parent.getCurrentIndex()
+                        else:
+                            if self.oldParent == self.parent.getCurrentIndex():
+                                temp_count = self.count_list[j - 1] + 1
+                                self.count_list.append(temp_count)
+                    else:
+                        self.count_list.append(self.counter)
         return 1
 
 ################################################################################################
@@ -168,8 +182,8 @@ class reference_list:
         """
         if v2:
             print('# Searching references in paragraph : \n'+pr.text)
-        #pr = text
-        txt_label = ':'+str(self.tag)+'{'
+        # pr = text
+        txt_label = '`'+str(self.tag)+'{'
         error = False
         if txt_label.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
@@ -177,29 +191,36 @@ class reference_list:
             for j in range(len(inline)):
                 found = False
                 [tmp_text, found] = Match_Tag(inline, j, found, v2, v1, error)
-                # If text is found input the wright number
+                # If text is found input the right number
                 if found:
                     if v1:
                         print("Info: Match Tag final text : " + tmp_text)
                     if v2:
                         print("Paragraph after removal : \n" + pr.text)
+                    tagInList = False
                     for i in range(len(self.ref_list)):
                         if str(self.ref_list[i]).lower() in tmp_text.lower():
-                            if (self.style == 1):
-                                if (self.parent is None):
-                                    txt = str(1 + i)
-                            elif (self.style == 2):
-                                if (self.parent is None):
-                                    txt = int_to_roman(1 + i)
-                            elif (self.style == 3):
-                                if (self.parent is None):
-                                    txt = int_to_small(1 + i)
+                            tagInList = True
+                            self.checkList[i] = 1
+                            if (self.parent is None):
+                                txt = formatSelect(self.count_list[i], self.style)
                             else:
-                                if (self.parent is None):
-                                    txt = int_to_cap(1 + i)
-                            inline[j].text = txt
-                    if v2:
-                        print("Paragraph after replace : \n" + pr.text)
+                                txt = self.parrentHier(i)
+                                txt += formatSelect(self.count_list[i], self.style)
+                            inline[j].text += txt
+                    if not tagInList:
+                        print("############################################!!!WARNING!!!######################################################")
+                        print("#Tag or label not found in the list. Either wrong tag or wrong label was used! Check the following paragraph: #\n" + pr.text)
+                        print("############################################!!!WARNING!!!######################################################")
+                        print("############################################!!!WARNING!!!######################################################")
+                        print("#Labels Found  :                                                                                              #")
+                        print(tmp_text)
+                        print("#Labels in list:                                                                                              #")
+                        print(self.ref_list)
+                        print("############################################!!!WARNING!!!######################################################")
+                    else:
+                        if v2:
+                            print("Paragraph after replace : \n" + pr.text)
         return 1
 
 ################################################################################################
@@ -207,32 +228,41 @@ class reference_list:
 ################################################################################################
 
 ################################################################################################
-# Begin : Match and replace function                                                           #
+# Begin : Get Parent Function                                                                  #
 ################################################################################################
 
     def getParent(self):
         return self.parent
 
 ################################################################################################
-# End : Match and replace function                                                             #
+# End : Get parent function                                                                    #
 ################################################################################################
 
 ################################################################################################
-# Begin : Match and replace function                                                           #
+# Begin : Get parent count                                                                     #
 ################################################################################################
 
     def getParent_count(self):
         return self.parent_count
 
+################################################################################################
+# End : Get parent count                                                                       #
+################################################################################################
 
 ################################################################################################
-# End : Match and replace function                                                             #
+# Begin : Get current index                                                                    #
+################################################################################################
+
+    def getCurrentIndex(self):
+        return self.count_list[self.counter-1]
+
+################################################################################################
+# End : Get current index                                                                      #
 ################################################################################################
 
 ################################################################################################
 # Begin : Print list                                                                           #
 ################################################################################################
-
 
     def printList(self):
         print("Reference list of " + self.name)
@@ -241,6 +271,19 @@ class reference_list:
 
 ################################################################################################
 # End : Print list                                                                             #
+################################################################################################
+
+################################################################################################
+# Begin : Print Index list                                                                     #
+################################################################################################
+
+    def printIndexList(self):
+        print("Index list of " + self.name)
+        print(self.count_list)
+        return 1
+
+################################################################################################
+# End : Print Index list                                                                       #
 ################################################################################################
 
 ################################################################################################
@@ -285,13 +328,44 @@ class reference_list:
 ################################################################################################
 
 ################################################################################################
-# Begin : Search and find parrent hiearchy                                                     #
+# Begin : Search and find parrent hierarchy                                                    #
 ################################################################################################
 
-    def parrentHier(self):
+    def parrentHier(self, i):
         rtn = ''
+        if not (self.parent is None):
+            print("Parent Count of class " + self.name + " is : " + str(self.parent_count[i]))
+            self.parent.printIndexList()
+            print("Parent index for this count is : "+str(self.parent.count_list[self.parent_count[i]-1]))
+            parent_text = self.parent.parrentHier(self.parent_count[i] - 1)
+            print("Parent text in class " + self.name + " is " + parent_text)
+            temp_self_list = self.count_list[i]
+            temporaryText = formatSelect(temp_self_list, self.style)
+            print("Temporary text in class " + self.name + " is " + temporaryText)
+            rtn = parent_text + '.'
+        else:
+            print("No parent in class : " + self.name + ".")
+            temp_self_list = self.count_list[i]
+            rtn = formatSelect(temp_self_list, self.style)
+        print("Text to be returned from the call is : "+rtn)
         return rtn
 
 ################################################################################################
-# End : Search and find parrent hiearchy                                                       #
+# End : Search and find parrent hierarchy                                                      #
+################################################################################################
+
+################################################################################################
+# Begin : Check reference list                                                                 #
+################################################################################################
+
+    def checkRefList(self):
+        for i in range(len(self.ref_list)):
+            if (self.checkList[i] == 0):
+                print("##################!!!Warning!!!##################")
+                print("# Label "+str(self.ref_list[i])+" of class "+self.name+"\n"+"# Is not referenced anywhere in the text.")
+                print("#################################################")
+        return 1
+
+################################################################################################
+# End : Check reference list                                                                   #
 ################################################################################################
