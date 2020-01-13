@@ -26,17 +26,17 @@
 import re
 import comtypes.client
 import docx
-import WordTea_functions
-from WordTea_functions import *
+import UtilFunctions
+from UtilFunctions import *
 from docx import Document
 from docx.shared import Inches
 
 
-class reference_list:
+class referenceList:
     """
     ####################################################################################
     # Class:                                                                           #
-    #        reference_list                                                            #
+    #        referenceList                                                             #
     #                                                                                  #
     # Description:                                                                     #
     #        This class is used to create a set (list) of references. The references   #
@@ -334,14 +334,14 @@ class reference_list:
     def parrentHier(self, i):
         rtn = ''
         if not (self.parent is None):
-            print("Parent Count of class " + self.name + " is : " + str(self.parent_count[i]))
-            self.parent.printIndexList()
-            print("Parent index for this count is : "+str(self.parent.count_list[self.parent_count[i]-1]))
+            #print("Parent Count of class " + self.name + " is : " + str(self.parent_count[i]))
+            # self.parent.printIndexList()
+            #print("Parent index for this count is : "+str(self.parent.count_list[self.parent_count[i]-1]))
             parent_text = self.parent.parrentHier(self.parent_count[i] - 1)
-            print("Parent text in class " + self.name + " is " + parent_text)
-            temp_self_list = self.count_list[i]
-            temporaryText = formatSelect(temp_self_list, self.style)
-            print("Temporary text in class " + self.name + " is " + temporaryText)
+            #print("Parent text in class " + self.name + " is " + parent_text)
+            #temp_self_list = self.count_list[i]
+            #temporaryText = formatSelect(temp_self_list, self.style)
+            #print("Temporary text in class " + self.name + " is " + temporaryText)
             rtn = parent_text + '.'
         else:
             print("No parent in class : " + self.name + ".")

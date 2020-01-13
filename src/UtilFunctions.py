@@ -2,7 +2,7 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Last edited   : 09/01/2020
+# Last edited   : 13/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #                                                                         #
@@ -23,7 +23,7 @@
 #                                                                         #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-# TODO : Comment the function
+# TODO : Comment the functions
 # TODO : Create a util class
 
 import re
