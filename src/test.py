@@ -7,12 +7,12 @@ import re
 import comtypes.client
 import csv
 import docx
-import WordTea_functions
-import WordTea_classes
-from WordTea_functions import *
+import UtilFunctions
+import referenceList
+from UtilFunctions import *
 from docx import Document
 from docx.shared import Inches
-from WordTea_classes import reference_list
+from referenceList import referenceList
 
 
 # Main function
@@ -105,13 +105,13 @@ def __main__():
     # Copy the main document to the temporary document
     document = Document(tmp_file)
 
-    print(reference_list.__doc__)
-    print(reference_list.__init__.__doc__)
-    fig = reference_list("Figure", "f", "fig")
-    sec0 = reference_list("Section 0", "s0", "sect0", 2)
-    sec1 = reference_list("Section 1", "s1", "sect1", 2, sec0)
-    tbl = reference_list("Table", "t", "tbl")
-    cite = reference_list("Citations", "cite", "cite")
+    print(referenceList.__doc__)
+    print(referenceList.__init__.__doc__)
+    fig = referenceList("Figure", "fig", "fig")
+    sec0 = referenceList("Section 0", "sec1", "sec1", 2)
+    sec1 = referenceList("Section 1", "sec2", "sec2", 2, sec0)
+    tbl = referenceList("Table", "tbl", "tbl")
+    cite = referenceList("Citations", "cite", "cite")
     print(tbl)
     for pr in document.paragraphs:
         #print("Before :")

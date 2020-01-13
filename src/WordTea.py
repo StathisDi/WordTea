@@ -126,7 +126,7 @@ def __main__():
     equ = referenceList("Equations", "eq", "eq", 1, None)
     cite = referenceList("Citations", "cite", "cite", 1, None)
     ###############################################################
-    document.save(tmp_file)
+    #
     print("Process: File open.")
     if v1:
         print("Details: Cross-reference database:")
@@ -224,6 +224,7 @@ def __main__():
     print("Process: Saving post-processed temporary .docx document and .pdf file.")
     word = comtypes.client.CreateObject('Word.Application')
     # TODO Find how to use catch problem
+    document.save(tmp_file)
     doc = word.Documents.Open(tmp_file)
     doc.SaveAs(out_file, FileFormat=wdFormatPDF)
     doc.Close()
