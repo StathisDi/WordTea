@@ -108,6 +108,15 @@ The python packages can be installed by using **pip**
 
 To install in windows use pip3.exe install <package name> from a command window. For mac or linux you can use the pip3 command from the terminal.
 
+# Releases
+Stand-alone releases for windows machines can be found below.
+Put the .exe file in a folder that is included in your system or user path variable and you will be able to access the tool from anywhere in your system.
+To find-out how to include a folder in your path variable see the following guide: ["Path Variable Guide"](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+
+| Release Version | Download                                                                                            | Date       | Type  |
+| --------------- | --------------------------------------------------------------------------------------------------- | ---------- | ----- |
+| 0.2.0           | [WordTea.0.2.0.exe](https://github.com/StathisDi/WordTea/releases/download/0.2.0/WordTea.0.2.0.exe) | 14/01/2020 | Alpha |
+
 # Version Details:
  Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
  email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : stathis@kth.se, sta.dimitris@gmail.com </br>
