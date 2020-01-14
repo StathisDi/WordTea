@@ -118,7 +118,7 @@ To find-out how to include a folder in your path variable see the following guid
 | 0.2.0           | [WordTea.0.2.0.exe](https://github.com/StathisDi/WordTea/releases/download/0.2.0/WordTea.0.2.0.exe) | 14/01/2020 | Alpha |
 
 # Version Details:
- Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
+ Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
  email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : stathis@kth.se, sta.dimitris@gmail.com </br>
  Last edited : 21/12/2019 </br>
  version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 0.2.0</br>
