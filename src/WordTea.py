@@ -126,6 +126,7 @@ def __main__():
     tbl = referenceList("Tables", "tbl", "tbl", tbl_f, None)
     equ = referenceList("Equations", "eq", "eq", 1, None)
     cite = referenceList("Citations", "cite", "cite", 1, None)
+    # Add more list here or adjust the above
     ###############################################################
     #
     print("Process: File open.")
@@ -153,6 +154,7 @@ def __main__():
         tbl.buildList(pr, v1, v2)
         equ.buildList(pr, v1, v2)
         cite.buildList(pr, v1, v2)
+        # If you have added new objects call the buildList function here
     print("Process: Building of the reference database is completed.")
     ###############################################################
 
@@ -178,6 +180,7 @@ def __main__():
         sec2.printParentList()
         tbl.printParentList()
         cite.printParentList()
+    # If you have added new objects call the print functions here
     ###############################################################
 
     ###############################################################
@@ -193,6 +196,7 @@ def __main__():
         tbl.matchNreplace(pr, v1, v2)
         equ.matchNreplace(pr, v1, v2)
         cite.matchNreplace(pr, v1, v2)
+        # If you have added new objects call the matchNreplace function here
     print("Process: Search and replace of the labels in the text completed.")
     ###############################################################
 
@@ -207,6 +211,7 @@ def __main__():
     tbl.checkRefList()
     equ.checkRefList()
     cite.checkRefList()
+    # If you have added new objects call the check function here
     ###############################################################
     if v1:
         print("Process: Cleaning up work space and deleting database.")
@@ -221,6 +226,7 @@ def __main__():
     del tbl
     del equ
     del cite
+    # If you have added new objects delete them here
     ###############################################################
     print("Process: Saving post-processed temporary .docx document and .pdf file.")
     word = comtypes.client.CreateObject('Word.Application')

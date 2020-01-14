@@ -90,6 +90,14 @@ Some available options:
 - Create a utility class that will include all the utility functions.
 - Find out why the footnotes are removed.
 
+## Future expansions
+- Create GUI front-end
+- Full documentation coming soon
+
+## Adjusting code for your own needs
+The code can be easily adjusted to fit different needs. You can create new type of cross-references by adding new objects of type referenceList in the main `WordTead.py` file in the `src` folder. 
+For more details on how the inner workings of the code, see the documentation inside the files. 
+
 ## Requirements
 In order to run the script there are the following requirements.
 - Python 3
