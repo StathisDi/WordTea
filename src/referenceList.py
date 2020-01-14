@@ -2,7 +2,7 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Version       : 1.0
+# Version       : 0.1.0
 # Last edited   : 13/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

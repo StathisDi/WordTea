@@ -104,7 +104,7 @@ To install in windows use pip3.exe install <package name> from a command window.
  Author &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Dimitrios Stathis </br>
  email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : stathis@kth.se, sta.dimitris@gmail.com </br>
  Last edited : 21/12/2019 </br>
- version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 2.0</br>
+ version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 0.2.0</br>
  &copy; Copyright 2017, All rights reserved.
 
 # LICENSE

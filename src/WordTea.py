@@ -2,7 +2,7 @@
 
 # Copyright 2017, Dimitrios Stathis, All rights reserved.
 # email         : stathis@kth.se, sta.dimitris@gmail.com
-# Version       : 2.0
+# Version       : 0.2.0
 # Last edited   : 13/01/2020
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -102,7 +102,7 @@ def __main__():
         print(max)
 
     #ref_file = ""
-    #if (args.r) != None:
+    # if (args.r) != None:
     #    ref_file = os.path.abspath(args.r)
 
     #######################################
