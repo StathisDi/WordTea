@@ -146,14 +146,15 @@ def __main__():
     ###############################################################
     print("Process: Start building the reference database.")
     for pr in document.paragraphs:
-        fig.buildList(pr, v1, v2)
+        
         sec1.buildList(pr, v1, v2)
         sec2.buildList(pr, v1, v2)
-        sec3.buildList(pr, v1, v2)
-        sec4.buildList(pr, v1, v2)
+        #sec3.buildList(pr, v1, v2)
+        #sec4.buildList(pr, v1, v2)
         tbl.buildList(pr, v1, v2)
-        equ.buildList(pr, v1, v2)
         cite.buildList(pr, v1, v2)
+        fig.buildList(pr, v1, v2)
+        equ.buildList(pr, v1, v2)
         # If you have added new objects call the buildList function here
     print("Process: Building of the reference database is completed.")
     ###############################################################
@@ -162,27 +163,36 @@ def __main__():
     # Print List and other details ################################
     ###############################################################
     if v1:
+        print("\n\n\n###########################")
         print("Details of the Database")
         fig.printList()
         sec1.printList()
         sec2.printList()
         tbl.printList()
+        equ.printList()
         cite.printList()
-    if v2:
+    if v1:
+        print("\n\n\n###########################")
         fig.printIndexList()
         sec1.printIndexList()
         sec2.printIndexList()
         tbl.printIndexList()
+        equ.printIndexList()
         cite.printIndexList()
-    if v2:
+    if v1:
+        print("\n\n\n###########################")
         fig.printParentList()
         sec1.printParentList()
         sec2.printParentList()
         tbl.printParentList()
+        equ.printParentList()
         cite.printParentList()
+        print("\n\n\n###########################")
+    if v1:
+        print("###########################\n\n\n")
     # If you have added new objects call the print functions here
     ###############################################################
-
+    exit()
     ###############################################################
     # Search and Replace Labels ###################################
     ###############################################################

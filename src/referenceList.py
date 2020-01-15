@@ -139,16 +139,28 @@ class referenceList:
                     self.counter += 1
                     if not (self.parent is None):
                         self.parent_count.append(self.parent.counter)
-                        if j == 0:
+                        print("self counter "+str(self.counter))
+                        print("self list")
+                        print(self.count_list)
+                        if self.counter-1 == 0:
                             self.count_list.append(1)
                             self.parent.printIndexList()
                             self.oldParent = self.parent.getCurrentIndex()
                         else:
                             if self.oldParent == self.parent.getCurrentIndex():
-                                temp_count = self.count_list[j - 1] + 1
+                                temp_count = self.count_list[self.counter - 2] + 1
                                 self.count_list.append(temp_count)
+                            else:
+                                temp_count = 1
+                                self.count_list.append(temp_count)
+                                self.oldParent = self.parent.getCurrentIndex()
                     else:
                         self.count_list.append(self.counter)
+        if(len(self.count_list)!=len(self.ref_list)):
+            print("Length of lists does not match!")
+            print(self.ref_list)
+            print(self.count_list)
+            exit()
         return 1
 
 ################################################################################################
