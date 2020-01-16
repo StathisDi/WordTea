@@ -40,6 +40,7 @@ from referenceList import referenceList
 from docx import Document
 from docx.shared import Inches
 
+# FIXME Bug when multiple labels are in one inline
 # TODO There is bug that removes footnotes.
 # TODO add functionality for reference from bibtex file
 
@@ -154,7 +155,7 @@ def __main__():
         sec4.buildList(pr, v1, v2)
         tbl.buildList(pr, v1, v2)
         cite.buildList(pr, v1, v2)
-        
+
         # If you have added new objects call the buildList function here
     print("Process: Building of the reference database is completed.")
     ###############################################################
@@ -206,21 +207,21 @@ def __main__():
         tbl.matchNreplace(pr, v1, v2)
         equ.matchNreplace(pr, v1, v2)
         cite.matchNreplace(pr, v1, v2)
-        # If you have added new objects call the matchNreplace function here
+    # If you have added new objects call the matchNreplace function here
     print("Process: Search and replace of the labels in the text completed.")
     ###############################################################
 
     ###############################################################
     # Print the results from the search and replace function ######
     ###############################################################
-    fig.checkRefList()
-    sec1.checkRefList()
-    sec2.checkRefList()
-    sec3.checkRefList()
-    sec3.checkRefList()
-    tbl.checkRefList()
-    equ.checkRefList()
-    cite.checkRefList()
+    # fig.checkRefList()
+    # sec1.checkRefList()
+    # sec2.checkRefList()
+    # sec3.checkRefList()
+    # sec3.checkRefList()
+    # tbl.checkRefList()
+    # equ.checkRefList()
+    # cite.checkRefList()
     # If you have added new objects call the check function here
     ###############################################################
     if v1:

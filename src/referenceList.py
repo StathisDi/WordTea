@@ -125,35 +125,47 @@ class referenceList:
             inline = pr.runs
             for j in range(len(inline)):
                 found = False
-                [tmp_text, found] = Match_label(inline, j, found, v2, v1, error)
+                if v2:
+                    print("Info: Class "+self.name+" is calling the match label function.")
+                [tmp_text, found] = Match_label(inline, j, self.label, found, v2, v1, error)
+                # Put text back to the inline
+                if ((not (txt_label.lower() in tmp_text.lower())) and found):
+                    print('##################!!!ERROR Debug Time!!!###########################')
+                    print("Label : \"" + txt_label + "\" not found in text \"" + tmp_text + "\". Text will be inserted back to the inline.")
+                    print("Inline text is : "+inline[j].text)
+                    found = False
+                    exit()
                 # If text is found put it in the list
                 if found:
                     if v1:
                         print("Info: Match label final text : " + tmp_text)
                     if v2:
                         print("Paragraph after : \n" + pr.text)
-                    tmp = FindLabelInText(tmp_text, self.label, v2, v1)
+                    start = r"\^\s*"
+                    end = r"\s*\{([^\}]+)\}\s*\^"
+                    tmp_list = FindLabelInText(tmp_text, self.label, start, end, v2, v1)
                     # Store the low case label
-                    self.ref_list.append(tmp)
-                    self.checkList.append(0)
-                    self.counter += 1
-                    if not (self.parent is None):
-                        self.parent_count.append(self.parent.counter)
-                        if self.counter-1 == 0:
-                            self.count_list.append(1)
-                            self.parent.printIndexList()
-                            self.oldParent = self.parent.getCurrentIndex()
-                        else:
-                            if self.oldParent == self.parent.getCurrentIndex():
-                                temp_count = self.count_list[self.counter - 2] + 1
-                                self.count_list.append(temp_count)
-                            else:
-                                temp_count = 1
-                                self.count_list.append(temp_count)
+                    for tmp in tmp_list:
+                        self.ref_list.append(tmp)
+                        self.checkList.append(0)
+                        self.counter += 1
+                        if not (self.parent is None):
+                            self.parent_count.append(self.parent.counter)
+                            if self.counter-1 == 0:
+                                self.count_list.append(1)
+                                self.parent.printIndexList()
                                 self.oldParent = self.parent.getCurrentIndex()
-                    else:
-                        self.count_list.append(self.counter)
-        if(len(self.count_list)!=len(self.ref_list)):
+                            else:
+                                if self.oldParent == self.parent.getCurrentIndex():
+                                    temp_count = self.count_list[self.counter - 2] + 1
+                                    self.count_list.append(temp_count)
+                                else:
+                                    temp_count = 1
+                                    self.count_list.append(temp_count)
+                                    self.oldParent = self.parent.getCurrentIndex()
+                        else:
+                            self.count_list.append(self.counter)
+        if(len(self.count_list) != len(self.ref_list)):
             print("Length of lists does not match!")
             print(self.ref_list)
             print(self.count_list)
@@ -200,7 +212,13 @@ class referenceList:
             inline = pr.runs
             for j in range(len(inline)):
                 found = False
-                [tmp_text, found] = Match_Tag(inline, j, found, v2, v1, error)
+                [tmp_text, found] = Match_Tag(inline, j, self.label, found, v2, v1, error)
+                if ((not (txt_label.lower() in tmp_text)) and found):
+                    print('##################!!!ERROR Debug Time!!!###########################')
+                    print("Label : \"" + txt_label + "\" not found in text \"" + tmp_text + "\". ")
+                    print("Inline text is : "+inline[j].text)
+                    found = False
+                    exit()
                 # If text is found input the right number
                 if found:
                     if v1:
@@ -208,16 +226,26 @@ class referenceList:
                     if v2:
                         print("Paragraph after removal : \n" + pr.text)
                     tagInList = False
-                    for i in range(len(self.ref_list)):
-                        if str(self.ref_list[i]).lower() in tmp_text.lower():
-                            tagInList = True
-                            self.checkList[i] = 1
-                            if (self.parent is None):
-                                txt = formatSelect(self.count_list[i], self.style)
-                            else:
-                                txt = self.parrentHier(i, v2)
-                                txt += formatSelect(self.count_list[i], self.style)
-                            inline[j].text += txt
+                    start = r"`\s*"
+                    end = r"\s*\{([^\}]+)\}\s*`"
+                    tmp_list = FindLabelInText(tmp_text, self.label, start, end, v2, v1)
+                    for tmp in tmp_list:
+                        for i in range(len(self.ref_list)):
+                            if str(self.ref_list[i]).lower() in tmp.lower():
+                                tagInList = True
+                                self.checkList[i] = 1
+                                if (self.parent is None):
+                                    txt = formatSelect(self.count_list[i], self.style)
+                                else:
+                                    txt = self.parrentHier(i, v2)
+                                    txt += formatSelect(self.count_list[i], self.style)
+                                toReplace = start + self.label + r"\s*\{\s*" + self.ref_list[i].lower() + r"\s*\}\s*`"
+                                if v2:
+                                    print("INFO: tag found : ")
+                                    print(re.findall(toReplace, inline[j].text.lower()))
+                                inline[j].text = re.sub(toReplace, txt, inline[j].text.lower())
+                                print(pr.text)
+                                # exit()
                     if not tagInList:
                         print("############################################!!!WARNING!!!######################################################")
                         print("#Tag or label not found in the list. Either wrong tag or wrong label was used! Check the following paragraph: #\n" + pr.text)

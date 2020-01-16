@@ -81,37 +81,37 @@ def int_to_cap(input):
 # Function to match and remove a label inside paragraph text
 
 
-def Match_label(inline, j, found, v2, v1, error):
+def Match_label(inline, j, label, found, v2, v1, error):
     tmp_txt = ''
     if ('^' in inline[j].text):
         found = True
-        tmp_txt = inline[j].text.lower()
+        tmp_txt = inline[j].text
         if v2:
-            print('First inline: '+tmp_txt)
+            print('First inline: '+inline[j].text)
         k = 1
         flag = True
+        pattern = r"\^\s*"+label+r"\s*\{[^\^]+\}\s*\^"
         while flag:
-            pattern = r'\^[^\^]+\^'
-            if re.search(pattern, tmp_txt):
+            if re.search(pattern, tmp_txt, re.I):
                 if v2:
                     print('##########################################################')
                     print('             Full Label found:                            ')
                     print(' Label : ' + tmp_txt)
                     print('##########################################################')
                 # Remove the label from the inline text
-                inline[j].text = re.sub(pattern, '', inline[j].text)
                 flag = False  # Exit the loop if you find the full label
                 found = True
             else:
                 if '^' in inline[j + k].text:
                     # Remove the initial part of the label from the first inline text
-                    toRemove = r'\^[^\^]*$'
-                    inline[j].text = re.sub(toRemove, '', inline[j].text)
+                    # toRemove = r'\^[^\^]*$'
+                    # inline[j].text = re.sub(toRemove, '', inline[j].text)
                     if v2:
                         print('##########################################################')
                         print('                Label is in pieces                        ')
                         print('Inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
                     split_text = re.split(r'\^', inline[j + k].text)
+                    inline[j].text += inline[j + k].text
                     tmp_txt += (split_text[0].lower() + '^')
                     if v2:
                         print('Text list :')
@@ -124,6 +124,11 @@ def Match_label(inline, j, found, v2, v1, error):
                         print('##########################################################')
                     flag = False  # Exit the loop if you complete the label
                 else:
+                    if v2:
+                        print('##########################################################')
+                        print('                Label is in pieces                        ')
+                        print('Inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
+                    inline[j].text += inline[j + k].text.lower()
                     tmp_txt += inline[j + k].text.lower()
                     temporary_check = j + k
                     if (temporary_check < (len(inline) - 1)):
@@ -134,54 +139,72 @@ def Match_label(inline, j, found, v2, v1, error):
                         flag = False
                         error = True
                         found = False
-    return [tmp_txt, found]
+        if v2:
+            print("inline text after assembly:")
+            print(inline[j].text)
+        if re.search(pattern, inline[j].text, re.I):
+            if v2:
+                print("Info: Found label :")
+                print(re.findall(pattern, inline[j].text, re.I))
+                print("Info: Removing text from inline")
+            inline[j].text = re.sub(pattern, '', inline[j].text.lower())
+            if v2:
+                print("Info: inline after remove:")
+                print(inline[j].text)
+                print("Info: Returning text: " + tmp_txt)
+            found = True
+        else:
+            if v2:
+                print("Info: pattern not found. Label was :" + label + "\n\t Inline text is : " + inline[j].text)
+                print("\t Returning empty!")
+                tmp_txt = ""
+                found = False
+    return [tmp_txt.lower(), found]
 
 # Function to find a label inside a string
 
 
-def FindLabelInText(text, label, v2, v1):
-    tmp1 = re.split('{|}', text)
-    tmp1[1] = re.sub(r"\s+", "", tmp1[1])
+def FindLabelInText(text, label, start, end, v2, v1):
+    regex = start + label.lower() + end
+    tmp = re.findall(regex, text)
     if v1:
-        print(tmp1)
-        print("Found Label : "+str(tmp1[1]))
-    return tmp1[1]
+        print("Labels found in text :")
+        print(tmp)
+    return tmp
 
 
 # Function to match and remove tags inside paragraph text
 
 
-def Match_Tag(inline, j, found, v2, v1, error):
+def Match_Tag(inline, j, label, found, v2, v1, error):
     tmp_txt = ''
     if ('`' in inline[j].text):
         found = True
-        tmp_txt = inline[j].text.lower()
+        tmp_txt = inline[j].text
         if v2:
             print('First inline: '+tmp_txt)
         k = 1
         flag = True
+        pattern = r"`\s*"+label+r"\s*\{[^`]+\}\s*`"
         while flag:
-            pattern = r'`[^`]+\}`'
-            if re.search(pattern, tmp_txt):
+            if re.search(pattern, tmp_txt, re.I):
                 if v2:
                     print('##########################################################')
                     print('             Full Tag found:                              ')
                     print(' Tag : ' + tmp_txt)
                     print('##########################################################')
                 # Remove the label from the inline text
-                inline[j].text = re.sub(pattern, '', inline[j].text)
+                #inline[j].text = re.sub(pattern, '', inline[j].text)
                 flag = False  # Exit the loop if you find the full label
                 found = True
             else:
                 if '`' in inline[j + k].text:
-                    # Remove the initial part of the label from the first inline text
-                    toRemove = r'`[^`]*$'
-                    inline[j].text = re.sub(toRemove, '', inline[j].text)
                     if v2:
                         print('##########################################################')
-                        print('                  Tag is in pieces                        ')
+                        print('                Label is in pieces                        ')
                         print('Inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
-                    split_text = re.split(r'`', inline[j + k].text)
+                    split_text = re.split(r'\`', inline[j + k].text)
+                    inline[j].text += inline[j + k].text
                     tmp_txt += (split_text[0].lower() + '`')
                     if v2:
                         print('Text list :')
@@ -194,6 +217,11 @@ def Match_Tag(inline, j, found, v2, v1, error):
                         print('##########################################################')
                     flag = False  # Exit the loop if you complete the label
                 else:
+                    if v2:
+                        print('##########################################################')
+                        print('                Label is in pieces                        ')
+                        print('Inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
+                    inline[j].text += inline[j + k].text
                     tmp_txt += inline[j + k].text.lower()
                     temporary_check = j + k
                     if (temporary_check < (len(inline) - 1)):
@@ -204,6 +232,19 @@ def Match_Tag(inline, j, found, v2, v1, error):
                         flag = False
                         error = True
                         found = False
+        if v2:
+            print("inline text after assembly:")
+            print(inline[j].text)
+        if re.search(pattern, inline[j].text, re.I):
+            if v2:
+                print("Info: Found label :")
+                print(re.findall(pattern, inline[j].text, re.I))
+        else:
+            if v2:
+                print("Info: pattern not found. Label was : " + label + "\n\t Inline text is : " + inline[j].text)
+                print("\t Returning empty!")
+                tmp_txt = ""
+                found = False
     return [tmp_txt, found]
 
 
