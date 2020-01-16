@@ -197,16 +197,17 @@ def __main__():
     ###############################################################
     # Search and Replace Labels ###################################
     ###############################################################
-    print("Process: Start searching the text for relevant lables.")
-    for pr in document.paragraphs:
-        fig.matchNreplace(pr, v1, v2)
-        sec1.matchNreplace(pr, v1, v2)
-        sec2.matchNreplace(pr, v1, v2)
-        sec3.matchNreplace(pr, v1, v2)
-        sec4.matchNreplace(pr, v1, v2)
-        tbl.matchNreplace(pr, v1, v2)
-        equ.matchNreplace(pr, v1, v2)
-        cite.matchNreplace(pr, v1, v2)
+    for i in range(2):
+        print("Process: Start searching the text for relevant lables.")
+        for pr in document.paragraphs:
+            fig.matchNreplace(pr, v1, v2)
+            sec1.matchNreplace(pr, v1, v2)
+            sec2.matchNreplace(pr, v1, v2)
+            sec3.matchNreplace(pr, v1, v2)
+            sec4.matchNreplace(pr, v1, v2)
+            tbl.matchNreplace(pr, v1, v2)
+            equ.matchNreplace(pr, v1, v2)
+            cite.matchNreplace(pr, v1, v2)
     # If you have added new objects call the matchNreplace function here
     print("Process: Search and replace of the labels in the text completed.")
     ###############################################################

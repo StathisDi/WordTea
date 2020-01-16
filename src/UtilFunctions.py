@@ -179,7 +179,7 @@ def FindLabelInText(text, label, start, end, v2, v1):
 def Match_Tag(inline, j, label, found, v2, v1, error):
     tmp_txt = ''
     if ('`' in inline[j].text):
-        found = True
+        found = False
         tmp_txt = inline[j].text
         if v2:
             print('First inline: '+tmp_txt)
@@ -212,6 +212,7 @@ def Match_Tag(inline, j, label, found, v2, v1, error):
                         print('Final temporary text = ' + tmp_txt)
                     # inline[j + k].text = split_text[1]
                     inline[j + k].text = ''
+                    find = True
                     if v2:
                         print('New inline text: ' + inline[j + k].text + ', k = ' + str(k) + ', j = ' + str(j))
                         print('##########################################################')
