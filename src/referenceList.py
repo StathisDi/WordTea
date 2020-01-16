@@ -118,7 +118,7 @@ class referenceList:
         if v2:
             print('# Building list paragraph : \n'+pr.text)
         # pr = text
-        txt_label = str(self.label)
+        txt_label = '^'+str(self.label)+'{'
         error = False
         if txt_label.lower() in pr.text.lower():
             # Loop added to work with runs (strings with same style)
@@ -139,9 +139,6 @@ class referenceList:
                     self.counter += 1
                     if not (self.parent is None):
                         self.parent_count.append(self.parent.counter)
-                        print("self counter "+str(self.counter))
-                        print("self list")
-                        print(self.count_list)
                         if self.counter-1 == 0:
                             self.count_list.append(1)
                             self.parent.printIndexList()
@@ -267,7 +264,11 @@ class referenceList:
 ################################################################################################
 
     def getCurrentIndex(self):
-        return self.count_list[self.counter-1]
+        if(self.counter != 0):
+            ret = self.count_list[self.counter-1]
+        else:
+            ret = -1
+        return ret
 
 ################################################################################################
 # End : Get current index                                                                      #

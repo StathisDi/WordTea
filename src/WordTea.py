@@ -40,7 +40,7 @@ from referenceList import referenceList
 from docx import Document
 from docx.shared import Inches
 
-# TODO: There is bug that removes footnotes.
+# TODO There is bug that removes footnotes.
 # TODO add functionality for reference from bibtex file
 
 
@@ -146,15 +146,15 @@ def __main__():
     ###############################################################
     print("Process: Start building the reference database.")
     for pr in document.paragraphs:
-        
-        sec1.buildList(pr, v1, v2)
-        sec2.buildList(pr, v1, v2)
-        #sec3.buildList(pr, v1, v2)
-        #sec4.buildList(pr, v1, v2)
-        tbl.buildList(pr, v1, v2)
-        cite.buildList(pr, v1, v2)
         fig.buildList(pr, v1, v2)
         equ.buildList(pr, v1, v2)
+        sec1.buildList(pr, v1, v2)
+        sec2.buildList(pr, v1, v2)
+        sec3.buildList(pr, v1, v2)
+        sec4.buildList(pr, v1, v2)
+        tbl.buildList(pr, v1, v2)
+        cite.buildList(pr, v1, v2)
+        
         # If you have added new objects call the buildList function here
     print("Process: Building of the reference database is completed.")
     ###############################################################
@@ -192,7 +192,7 @@ def __main__():
         print("###########################\n\n\n")
     # If you have added new objects call the print functions here
     ###############################################################
-    exit()
+
     ###############################################################
     # Search and Replace Labels ###################################
     ###############################################################
